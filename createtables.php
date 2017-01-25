@@ -19,7 +19,7 @@
      $accessright_sql = "CREATE TABLE `AccessRight` ( `collectionID` INT NOT NULL , `circleID` INT NOT NULL , PRIMARY KEY (`collectionID`,`circleID`))";
      $friend_sql = "CREATE TABLE `Friendship` ( `friend1ID` INT NOT NULL , `friend2ID` INT NOT NULL , PRIMARY KEY (`friend1ID`,`friend2ID`))";
      $circlemem_sql = "CREATE TABLE `CircleMembership` ( `circleID` INT NOT NULL , `accountID` INT NOT NULL , PRIMARY KEY (`circleID`,`accountID`))";
-  //   $message_sql = "CREATE TABLE `Message` ( `messageID` INT AUTO_INCREMENT NOT NULL, `circleID` INT NOT NULL, 'accountID' INT NOT NULL, 'content’ TEXT NOT NULL, 'timeStamp’ TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY ('messageID’))";
+     $message_sql = "CREATE TABLE `Message` ( `messageID` INT AUTO_INCREMENT NOT NULL, `circleID` INT NOT NULL, `accountID` INT NOT NULL, `content` TEXT NOT NULL, `timeStamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`messageID`))";
      $conn->query($account_sql);
      $conn->query($recommendation_sql);
      $conn->query($invitation_sql);
@@ -31,7 +31,7 @@
      $conn->query($accessright_sql);
      $conn->query($friend_sql);
      $conn->query($circlemem_sql);
-  //   $conn->query($message_sql);
+     $conn->query($message_sql);
  }
  catch(Exception $e){
      die(print_r($e));
