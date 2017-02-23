@@ -77,18 +77,21 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <form name="search" action='blog.php' id="search" method='post'>
+                    <form name="search" action='searchBlog.php' id="search" method='post'>
                         <div class="row control-group">
                             <div class="form-group floating-label-form-group controls">
                                 <label>Search</label>
                                 <input type="text" class="form-control" placeholder="Search..." name="search" required data-validation-required-message="Search">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button">
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <button class="btn btn-default" type="submit">
                                         <i class="fa fa-search"></i>
                                     </button>
-                                </span>
+                                </div>
                             </div>
                         </div>
+                    </form>
                 </div>
             </div>
         </div> 
@@ -111,7 +114,6 @@
             $search = $_POST['search'];
 
             $query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC";
-
         } else {
             $query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC";
         }
