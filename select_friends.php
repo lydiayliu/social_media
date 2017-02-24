@@ -1,0 +1,38 @@
+<?php
+  include('session.php');
+  $selfIDQuery = mysqli_query($conn, "select accountID from account where email_address = '$user_check'");
+  $row = mysqli_fetch_array($selfIDQuery);
+  $selfID = $row['accountID'];
+  $selfFriendsQuery = mysqli_query($conn, "select friend2ID from Friendship where friend1ID = ('$selfID') ");//why not = but IN
+  if($_SERVER["REQUEST_METHOD"] == "POST"){
+    $filteredName = mysqli_real_escape_string($conn,$_POST['circleName']);
+    if(!empty($_POST['selectedFriends'])) {
+      $FriendCircleQuery = mysqli_query($conn,"INSERT INTO FriendCircle (accountID,nameOfCircle) VALUES ($selfID,'$filteredName')");
+      $circleID = mysqli_insert_id($conn);
+      $insertSelfIntoCircleQuery = mysqli_query($conn,"INSERT INTO CircleMembership (circleID,accountID) VALUES ($circleID,$selfID)");
+      foreach($_POST['selectedFriends'] as $eachFriend) {
+        mysqli_query($conn,"INSERT INTO CircleMembership (circleID,accountID) VALUES ($circleID,'$eachFriend')");
+      }
+    }
+  }
+?>
+<html>
+  <body>
+    <h2>Form circle of friends</h2>
+    <form method = "post">
+      <label>Name of the circle: </label><input type="text" name="circleName" class="box"><br/>
+      <?php echo "You have ".mysqli_num_rows($selfFriendsQuery)." friends<br/>"; ?>
+      <label>Select friends to form a circle of friends<label><br/>
+      <?php while($friendRow = mysqli_fetch_array($selfFriendsQuery)){
+        $friendID = $friendRow["friend2ID"];
+        $friendNameQuery = mysqli_query($conn, "select name from Account where accountID = ('$friendID') ");
+        $nameRow = mysqli_fetch_array($friendNameQuery);
+        echo "<input type=\"checkbox\" name=\"selectedFriends[]\" value=\"".$friendID."\">".$nameRow['name']."<br/>";
+      }?>
+      <br/>
+      <input type="submit" value="Submit">
+    </form>
+    <p><a href = "welcome.php">back to welcome page</a></p>
+
+  </body>
+</html>
