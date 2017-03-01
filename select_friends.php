@@ -18,7 +18,9 @@
   }
 ?>
 <html>
-  <?php require_once('header.php');?>
+  <head>
+  <?php require_once('head.php');?>
+  </head>
   <body>
     <?php require_once('common_navbar.html');?>
     <script>

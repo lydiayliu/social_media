@@ -6,7 +6,9 @@
   $circleQuery = mysqli_query($conn, "select circleID from CircleMembership where accountID = ('$selfID')");
 ?>
 <html>
-  <?php require_once('header.php');?>
+  <head>
+  <?php require_once('head.php');?>
+  </head>
   <body>
     <?php require_once('common_navbar.html');?>
     <script>
@@ -52,6 +54,6 @@
     ?>
 
     <?php require_once('common_footer.html');?>
-    
+
   </body>
 </html>
