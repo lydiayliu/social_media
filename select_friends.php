@@ -13,16 +13,22 @@
       foreach($_POST['selectedFriends'] as $eachFriend) {
         mysqli_query($conn,"INSERT INTO CircleMembership (circleID,accountID) VALUES ($circleID,'$eachFriend')");
       }
+      echo "<div class=\"alert alert-success\" role=\"alert\">Circle created!</div>";
     }
   }
 ?>
 <html>
+  <?php require_once('header.php');?>
   <body>
+    <?php require_once('common_navbar.html');?>
+    <script>
+      $("#selectedFriends_header").addClass("active");
+    </script>
     <h2>Form circle of friends</h2>
     <form method = "post">
       <label>Name of the circle: </label><input type="text" name="circleName" class="box"><br/>
       <?php echo "You have ".mysqli_num_rows($selfFriendsQuery)." friends<br/>"; ?>
-      <label>Select friends to form a circle of friends<label><br/>
+      <p>Select friends to form a circle of friends<p>
       <?php while($friendRow = mysqli_fetch_array($selfFriendsQuery)){
         $friendID = $friendRow["friend2ID"];
         $friendNameQuery = mysqli_query($conn, "select name from Account where accountID = ('$friendID') ");
@@ -31,8 +37,16 @@
       }?>
       <br/>
       <input type="submit" value="Submit">
+      <br/>
     </form>
-    <p><a href = "welcome.php">back to welcome page</a></p>
+
+    <?php require_once('common_footer.html');?>
+
+    <footer class="container-fluid text-center">
+      <h5>Database Group 10
+      </h5>
+      <p>  </p>
+    </footer>
 
   </body>
 </html>

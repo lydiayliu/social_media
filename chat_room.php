@@ -3,16 +3,22 @@
   $selfIDQuery = mysqli_query($conn, "select accountID from account where email_address = '$user_check'");
   $row = mysqli_fetch_array($selfIDQuery);
   $selfID = $row['accountID'];
-  $selfCircleQuery = mysqli_query($conn, "select nameOfCircle,circleID from FriendCircle where accountID = ('$selfID') ");//why not = but IN
-
+  $circleQuery = mysqli_query($conn, "select circleID from CircleMembership where accountID = ('$selfID')");
 ?>
 <html>
+  <?php require_once('header.php');?>
   <body>
+    <?php require_once('common_navbar.html');?>
+    <script>
+      $("#chatRoom_header").addClass("active");
+    </script>
     <h2>Select the circle</h2>
     <form method = "post">
-      <?php while($circleRow = mysqli_fetch_array($selfCircleQuery)){
-        $nameOfCircle = $circleRow["nameOfCircle"];
+      <?php while($circleRow = mysqli_fetch_array($circleQuery)){
         $circleID = $circleRow["circleID"];
+        $circleNameQuery = mysqli_query($conn,"select nameOfCircle from FriendCircle where circleID = $circleID");
+        $circleNameRow = mysqli_fetch_array($circleNameQuery);
+        $nameOfCircle = $circleNameRow['nameOfCircle'];
         if ($_SERVER["REQUEST_METHOD"] == "POST" && $circleID == $_POST['selectedCircle']) {
           echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\" checked>".$nameOfCircle."<br/>";
         }else {
@@ -20,8 +26,10 @@
         }
       }?>
       <br/>
-      <input type="submit" value="Submit">
-      <input type="text" name="detail">
+      <input type="submit" value="Select">
+      <br/>
+      <br/>
+      <input type="text" name="detail" placeholder="message">
       <input type="submit" value="send" name="sendMessage">
     </form>
     <?php
@@ -42,6 +50,8 @@
         }
       }
     ?>
-    <p><a href = "welcome.php">back to welcome page</a></p>
+
+    <?php require_once('common_footer.html');?>
+    
   </body>
 </html>
