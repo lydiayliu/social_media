@@ -1,4 +1,57 @@
 <!DOCTYPE html>
+<?php
+include("dbconfig.php");
+session_start();
+
+if (isset($_SESSION['login_user'])) {
+    $user_email = $_SESSION['login_user'];
+} else {
+    $user_email = "error";
+}
+
+$load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
+$user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['accountID'];
+
+$bp_ID = $_GET['bpID'];
+
+if (!empty($_POST)) {
+
+    function getBlogPost() {
+        $blogPost = array();
+        $blogPost['title'] = $_POST['title'];
+        $blogPost['content'] = str_replace("\n", "<br />", $_POST['content']);
+        return $blogPost;
+    }
+
+    function saveToDatabase($blogPost, $bp_ID, $conn) {
+        $query = "UPDATE BlogPhoto
+                            SET title='${blogPost['title']}',
+                                text='${blogPost['content']}'
+                                WHERE bpID='$bp_ID'";
+        mysqli_query($conn, $query);
+    }
+
+    $editedBlogPost = getBlogPost();
+    saveToDatabase($editedBlogPost, $bp_ID, $conn);
+}
+
+$query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE bpID = $bp_ID";
+
+$result = mysqli_query($conn, $query)
+        or die('Error making saveToDatabase query' . mysql_error());
+
+$BP = mysqli_fetch_array($result);
+
+function displayEditButton($bp_ID) {
+    echo "
+        <ul class=\"pager\">
+            <li class=\"next\">
+                <a href=\"editBlog.php?bpID=$bp_ID\">Edit</a>
+            </li>
+        </ul>";
+}
+?>     
+
 <html lang="en">
 
     <head>
@@ -9,7 +62,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Clean Blog - Sample Post</title>
+        <title><?php echo $BP[1] ?></title>
 
         <!-- Bootstrap Core CSS -->
         <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -65,66 +118,7 @@
                 <!-- /.navbar-collapse -->
             </div>
             <!-- /.container -->
-        </nav>
-
-        <?php
-        $bp_ID = $_GET['bpID'];
-
-        $accountID = '1234';
-
-        // DB connection info
-        $host = "localhost";
-        $user = "zcabliu";
-        $pwd = "ratchet";
-        $db = "social_media";
-
-        if (!empty($_POST)) {
-
-            function getBlogPost() {
-                $blogPost = array();
-                $blogPost['title'] = $_POST['title'];
-                $blogPost['content'] = str_replace("\n", "<br />", $_POST['content']);
-                return $blogPost;
-            }
-
-            function saveToDatabase($blogPost, $bp_ID) {
-                // DB connection info
-                $host = "localhost";
-                $user = "zcabliu";
-                $pwd = "ratchet";
-                $db = "social_media";
-
-                // Connect to database.
-                try {
-                    $conn = new PDO("mysql:host=$host;dbname=$db", $user, $pwd);
-                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                } catch (Exception $e) {
-                    die(var_dump($e));
-                }
-                $query = "UPDATE BlogPhoto
-                            SET title='${blogPost['title']}',
-                                text='${blogPost['content']}'
-                                WHERE bpID='$bp_ID'";
-                $result = $conn->query($query)
-                        or die('Error making saveToDatabase query' . mysql_error());
-                $conn = null;
-            }
-
-            $editedBlogPost = getBlogPost();
-            saveToDatabase($editedBlogPost, $bp_ID);
-        }
-
-        $connection = mysqli_connect($host, $user, $pwd, $db)
-                or die('Error connecting to MySQL server.' . mysql_error());
-
-        $query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE bpID = $bp_ID";
-
-        $result = mysqli_query($connection, $query)
-                or die('Error making saveToDatabase query' . mysql_error());
-        mysqli_close($connection);
-
-        $BP = mysqli_fetch_array($result);
-        ?>        
+        </nav> 
 
         <!-- Page Header -->
         <!-- Set your background image for this header on the line below. -->
@@ -159,15 +153,14 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <ul class="pager">
                         <li class="next">
-                            <a href="blog.php">Back to Blog</a>
+                            <a href="blog.php?accountID=<?php echo $BP[0]?>">Back to Blog</a>
                         </li>
                     </ul>
-                    <ul class="pager">
-                        <li class="next">
-                            <a href="editBlog.php?bpID=<?php echo $bp_ID ?>">Edit</a>
-                        </li>
-
-                    </ul>
+                    <?php
+                    if ($user_accountID == $BP[0]) {
+                        displayEditButton($bp_ID);
+                    }
+                    ?>
                 </div>
             </div>
         </div>

@@ -1,4 +1,92 @@
 <!DOCTYPE html>
+<?php
+include("dbconfig.php");
+session_start();
+
+if (isset($_SESSION['login_user'])) {
+    $user_email = $_SESSION['login_user'];
+} else {
+    $user_email = "error";
+}
+
+$load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
+$user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['accountID'];
+
+echo($user_accountID);
+
+$blogPosts = array();
+
+$accountID = $_GET['accountID'];
+
+if (!empty($_REQUEST["delete"])) {
+    $delete = $_REQUEST["delete"];
+    
+    $delete_query = "DELETE FROM BlogPhoto WHERE bpID = $delete";
+    
+    $delete_result = mysqli_query($conn, $delete_query)
+        or die('Error making saveToDatabase query' . mysql_error());
+}
+
+$query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC";
+
+$result = mysqli_query($conn, $query)
+        or die('Error making saveToDatabase query' . mysql_error());
+
+$k = 0;
+while ($row = mysqli_fetch_array($result)) {
+    $blogPosts[$k] = $row;
+    $k = $k + 1;
+}
+
+function displayBP($blogPosts) {
+
+    echo "  <div class=\"container\">
+                    <div class=\"row\">
+                    <div class=\"col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1\">";
+
+    for ($x = 0; $x < count($blogPosts); $x++) {
+        $BP = $blogPosts[$x];
+
+        $preview = str_replace("<br />", "\n", $BP[2]);
+        $preview = substr($preview, 0, 50);
+
+        echo "               
+                    <div class=\"post-preview\">
+                        <a href=\"blogPost.php?bpID=$BP[4]\">
+                            <h2 class=\"post-title\">
+                                $BP[1]
+                            </h2>
+                            <h3 class=\"post-subtitle\">
+                                $preview
+                            </h3>
+                        </a>
+                        <p class=\"post-meta\">Posted by <a href=\"#\">$BP[0]</a> on $BP[3]</p>
+                    </div>
+                    <hr>
+                    ";
+    }
+
+    echo "          </div>
+                </div>
+            </div>";
+}
+
+function displayNewPostButton() {
+    echo "
+            <div class = \"container\">
+            <div class = \"row\">
+                <div class = \"col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1\">
+                    <ul class = \"pager\">
+                        <li class = \"next\">
+                            <a href = \"newBlog.html\">New Post</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>";
+}
+?>
+
 <html lang="en">
 
     <head>
@@ -77,7 +165,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <form name="search" action='searchBlog.php' id="search" method='post'>
+                    <form name="search" action='searchBlog.php?accountID=<?php echo $accountID ?>' id="search" method='post'>
                         <div class="row control-group">
                             <div class="form-group floating-label-form-group controls">
                                 <label>Search</label>
@@ -96,131 +184,54 @@
             </div>
         </div> 
 
+        <?php displayBP($blogPosts) ?>
+
         <?php
-        $blogPosts = array();
-
-
-        $accountID = '1234';
-        // DB connection info
-        $host = "localhost";
-        $user = "zcabliu";
-        $pwd = "ratchet";
-        $db = "social_media";
-
-        if (!empty($_POST)) {
-
-            echo "SEARCHINGIANSIFNASEI!IJCASJG";
-
-            $search = $_POST['search'];
-
-            $query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC";
-        } else {
-            $query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC";
-        }
-
-
-        $connection = mysqli_connect($host, $user, $pwd, $db)
-                or die('Error connecting to MySQL server.' . mysql_error());
-
-        $result = mysqli_query($connection, $query)
-                or die('Error making saveToDatabase query' . mysql_error());
-        mysqli_close($connection);
-
-
-        $k = 0;
-        while ($row = mysqli_fetch_array($result)) {
-            $blogPosts[$k] = $row;
-            $k = $k + 1;
-        }
-
-        function displayBP($blogPosts) {
-
-            echo "  <div class=\"container\">
-                    <div class=\"row\">
-                    <div class=\"col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1\">";
-
-            for ($x = 0; $x < count($blogPosts); $x++) {
-                $BP = $blogPosts[$x];
-
-                $preview = str_replace("<br />", "\n", $BP[2]);
-                $preview = substr($preview, 0, 50);
-
-                echo "               
-                    <div class=\"post-preview\">
-                        <a href=\"blogPost.php?bpID=$BP[4]\">
-                            <h2 class=\"post-title\">
-                                $BP[1]
-                            </h2>
-                            <h3 class=\"post-subtitle\">
-                                $preview
-                            </h3>
-                        </a>
-                        <p class=\"post-meta\">Posted by <a href=\"#\">$BP[0]</a> on $BP[3]</p>
-                    </div>
-                    <hr>
-                    ";
-            }
-
-            echo "          </div>
-                            </div>
-                            </div>";
+        if ($accountID == $user_accountID) {
+            displayNewPostButton();
         }
         ?>
 
-        <?php displayBP($blogPosts) ?>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <!-- Pager -->
-                    <ul class="pager">
-                        <li class="next">
-                            <a href="newBlog.html">New Post</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
+        <!--Footer -->
         <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                        <ul class="list-inline text-center">
+            <div class = "container">
+                <div class = "row">
+                    <div class = "col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                        <ul class = "list-inline text-center">
                             <li>
-                                <a href="#">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                <a href = "#">
+                                    <span class = "fa-stack fa-lg">
+                                        <i class = "fa fa-circle fa-stack-2x"></i>
+                                        <i class = "fa fa-twitter fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                <a href = "#">
+                                    <span class = "fa-stack fa-lg">
+                                        <i class = "fa fa-circle fa-stack-2x"></i>
+                                        <i class = "fa fa-facebook fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                <a href = "#">
+                                    <span class = "fa-stack fa-lg">
+                                        <i class = "fa fa-circle fa-stack-2x"></i>
+                                        <i class = "fa fa-github fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
                             </li>
                         </ul>
-                        <p class="copyright text-muted">Copyright &copy; Social Media DB10 2017</p>
+                        <p class = "copyright text-muted">Copyright &copy;
+                            Social Media DB10 2017</p>
                     </div>
                 </div>
             </div>
         </footer>
 
-        <!-- jQuery -->
-        <script src="vendor/jquery/jquery.min.js"></script>
+        <!--jQuery -->
+        <script src = "vendor/jquery/jquery.min.js"></script>
 
         <!-- Bootstrap Core JavaScript -->
         <script src="vendor/bootstrap/js/bootstrap.min.js"></script>

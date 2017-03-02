@@ -1,4 +1,68 @@
 <!DOCTYPE html>
+<?php
+$blogPosts = array();
+include("dbconfig.php");
+session_start();
+
+if (isset($_SESSION['login_user'])) {
+    $user_email = $_SESSION['login_user'];
+} else {
+    $user_email = "error";
+}
+
+$load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
+$user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['accountID'];
+
+echo($user_accountID);
+
+$accountID = $_GET['accountID'];
+$search = $_POST['search'];
+
+$query = "SELECT * FROM (SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC) AS sub WHERE title LIKE '%{$search}%' OR text LIKE '%{$search}%'";
+
+$result = mysqli_query($conn, $query)
+        or die('Error making search query' . mysql_error());
+
+$k = 0;
+while ($row = mysqli_fetch_array($result)) {
+    $blogPosts[$k] = $row;
+    $k = $k + 1;
+}
+
+function displayBP($blogPosts) {
+
+    echo "  <div class=\"container\">
+                    <div class=\"row\">
+                    <div class=\"col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1\">";
+
+    for ($x = 0; $x < count($blogPosts); $x++) {
+        $BP = $blogPosts[$x];
+
+        $preview = str_replace("<br />", "\n", $BP[2]);
+        $preview = substr($preview, 0, 50);
+
+        echo "               
+                    <div class=\"post-preview\">
+                        <a href=\"blogPost.php?bpID=$BP[4]\">
+                            <h2 class=\"post-title\">
+                                $BP[1]
+                            </h2>
+                            <h3 class=\"post-subtitle\">
+                                $preview
+                            </h3>
+                        </a>
+                        <p class=\"post-meta\">Posted by <a href=\"#\">$BP[0]</a> on $BP[3]</p>
+                    </div>
+                    <hr>
+                    ";
+    }
+
+    echo "          </div>
+                            </div>
+                            </div>";
+}
+?>
+
 <html lang="en">
 
     <head>
@@ -74,71 +138,10 @@
             </div>
         </header>
 
-        <?php
-        $blogPosts = array();
-
-        $accountID = '1234';
-        // DB connection info
-        $host = "localhost";
-        $user = "zcabliu";
-        $pwd = "ratchet";
-        $db = "social_media";
-
-        $search = $_POST['search'];
-
-        $query = "SELECT * FROM (SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC) AS sub WHERE title LIKE '%{$search}%' OR text LIKE '%{$search}%'";
-
-        $connection = mysqli_connect($host, $user, $pwd, $db)
-                or die('Error connecting to MySQL server.' . mysql_error());
-
-        $result = mysqli_query($connection, $query)
-                or die('Error making saveToDatabase query' . mysql_error());
-        mysqli_close($connection);
-
-        $k = 0;
-        while ($row = mysqli_fetch_array($result)) {
-            $blogPosts[$k] = $row;
-            $k = $k + 1;
-        }
-
-        function displayBP($blogPosts) {
-
-            echo "  <div class=\"container\">
-                    <div class=\"row\">
-                    <div class=\"col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1\">";
-
-            for ($x = 0; $x < count($blogPosts); $x++) {
-                $BP = $blogPosts[$x];
-
-                $preview = str_replace("<br />", "\n", $BP[2]);
-                $preview = substr($preview, 0, 50);
-
-                echo "               
-                    <div class=\"post-preview\">
-                        <a href=\"blogPost.php?bpID=$BP[4]\">
-                            <h2 class=\"post-title\">
-                                $BP[1]
-                            </h2>
-                            <h3 class=\"post-subtitle\">
-                                $preview
-                            </h3>
-                        </a>
-                        <p class=\"post-meta\">Posted by <a href=\"#\">$BP[0]</a> on $BP[3]</p>
-                    </div>
-                    <hr>
-                    ";
-            }
-
-            echo "          </div>
-                            </div>
-                            </div>";
-        }
-        ?>
-
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <form name="search" action='searchBlog.php' id="search" method='post'>
+                    <form name="search" action='searchBlog.php?accountID=<?php echo $accountID?>' id="search" method='post'>
                         <div class="row control-group">
                             <div class="form-group floating-label-form-group controls">
                                 <label>Search</label>
@@ -172,7 +175,7 @@
                     <!-- Pager -->
                     <ul class="pager">
                         <li class="next">
-                            <a href="blog.php">Back To Blog</a>
+                            <a href="blog.php?accountID=<?php echo $accountID?>">Back To Blog</a>
                         </li>
                     </ul>
                 </div>
