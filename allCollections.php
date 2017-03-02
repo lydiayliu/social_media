@@ -14,71 +14,79 @@ $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['acco
 
 echo($user_accountID);
 
+$collections = array();
+
 $accountID = $_GET['accountID'];
+
+function saveToDatabase($collection, $user_accountID, $conn) {
+    $query = "INSERT INTO Collection (accountID, name, description) " .
+            "VALUES ( '$user_accountID', '${collection['name']}', '${collection['description']}')";
+            echo $query;
+    $result = mysqli_query($conn, $query)
+            or die('Error making saveToDatabase query' . mysql_error());
+}
+
+//create new collection
+if (isset($_POST['title']) && isset($_POST['description'])) {
+    $collection = array();
+    $collection['name'] = $_POST['title'];
+    $collection['description'] = $_POST['description'];
+    saveToDatabase($collection, $user_accountID, $conn);
+}
 
 if (isset($_REQUEST["delete"])) {
     $delete = $_REQUEST["delete"];
     
-    $delete_query = "DELETE FROM BlogPhoto WHERE bpID = $delete";
+    $delete_query = "DELETE FROM Collection WHERE collectionID = $delete";
     
     $delete_result = mysqli_query($conn, $delete_query)
         or die('Error making saveToDatabase query' . mysql_error());
 }
 
-$blogPosts = array();
-
-$query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC";
+$query = "SELECT * FROM Collection WHERE accountID = $accountID";
 
 $result = mysqli_query($conn, $query)
-        or die('Error making saveToDatabase query' . mysql_error());
+        or die('Error making select collections query' . mysql_error());
 
 $k = 0;
 while ($row = mysqli_fetch_array($result)) {
-    $blogPosts[$k] = $row;
+    $collections[$k] = $row;
     $k = $k + 1;
 }
 
-function displayBP($blogPosts) {
+function displayCollections($collections) {
 
     echo "  <div class=\"container\">
                     <div class=\"row\">
                     <div class=\"col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1\">";
 
-    for ($x = 0; $x < count($blogPosts); $x++) {
-        $BP = $blogPosts[$x];
-
-        $preview = str_replace("<br />", "\n", $BP[2]);
-        $preview = substr($preview, 0, 50);
+    for ($x = 0; $x < count($collections); $x++) {
+        $Collection = $collections[$x];
 
         echo "               
                     <div class=\"post-preview\">
-                        <a href=\"blogPost.php?bpID=$BP[4]\">
+                        <a href=\"collection.php?collectionID=$Collection[0]\">
                             <h2 class=\"post-title\">
-                                $BP[1]
+                                $Collection[2]
                             </h2>
                             <h3 class=\"post-subtitle\">
-                                $preview
+                                $Collection[3]
                             </h3>
                         </a>
-                        <p class=\"post-meta\">Posted by <a href=\"#\">$BP[0]</a> on $BP[3]</p>
                     </div>
                     <hr>
                     ";
     }
-
-    echo "          </div>
-                </div>
-            </div>";
 }
 
-function displayNewPostButton() {
+function displayNewCollectionButton() {
     echo "
             <div class = \"container\">
             <div class = \"row\">
                 <div class = \"col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1\">
                     <ul class = \"pager\">
                         <li class = \"next\">
-                            <a href = \"newBlog.html\">New Post</a>
+                            <a href = \"newCollection.php\">New Collection</a>
                         </li>
                     </ul>
                 </div>
@@ -155,40 +163,18 @@ function displayNewPostButton() {
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                         <div class="site-heading">
-                            <h1>My Blog</h1>
+                            <h1>My Photo Collections</h1>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <form name="search" action='searchBlog.php?accountID=<?php echo $accountID ?>' id="search" method='post'>
-                        <div class="row control-group">
-                            <div class="form-group floating-label-form-group controls">
-                                <label>Search</label>
-                                <input type="text" class="form-control" placeholder="Search..." name="search" required data-validation-required-message="Search">
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <button class="btn btn-default" type="submit">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div> 
-
-        <?php displayBP($blogPosts) ?>
+        <?php displayCollections($collections) ?>
 
         <?php
         if ($accountID == $user_accountID) {
-            displayNewPostButton();
+            displayNewCollectionButton();
         }
         ?>
 
