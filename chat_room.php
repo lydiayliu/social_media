@@ -1,5 +1,10 @@
 <?php
   include('session.php');
+  if (!isset($_SESSION['login_user'])){
+    echo '<script type="text/javascript">
+       window.location = "index.php"
+  </script>';
+  }
   $selfIDQuery = mysqli_query($conn, "select accountID from account where email_address = '$user_check'");
   $row = mysqli_fetch_array($selfIDQuery);
   $selfID = $row['accountID'];
