@@ -120,7 +120,7 @@ echo($user_accountID);
                     <div id="success"></div>
                     <div class="row">
                         <div class="form-group col-xs-12">
-                            <a class="btn btn-default" href="blog.php">Cancel</a>
+                            <a class="btn btn-default" href="allCollections.php?accountID=<?php echo $user_accountID?>">Cancel</a>
                             <button type="submit" class="btn btn-default">Create</button>
                         </div>
                     </div>

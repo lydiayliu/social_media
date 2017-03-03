@@ -28,13 +28,14 @@ if (isset($_POST['annotation'])) {
     echo $annotation;
 
     //if annotation exists, delete it
-    $searchQuery = "SELECT * FROM Annotation WHERE accountID = $user_accountID AND annotation LIKE '%$annotation%'";
+    $searchQuery = "SELECT * FROM Annotation WHERE bpID = $bp_ID AND accountID = $user_accountID AND annotation LIKE '%$annotation%'";
     $result = mysqli_query($conn, $searchQuery)
             or die('Error making insert comments query' . mysql_error());
     $anno = mysqli_fetch_array($result);
 
     if ($anno) {
-        $annoQuery = "DELETE FROM Annotation WHERE accountID = $user_accountID AND annotation LIKE '%$annotation%'";
+        echo 'had annotation';
+        $annoQuery = "DELETE FROM Annotation WHERE bpID = $bp_ID AND accountID = $user_accountID AND annotation LIKE '%$annotation%'";
         $result = mysqli_query($conn, $annoQuery)
                 or die('Error making delete annotation query' . mysql_error());
     } else {
