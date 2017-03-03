@@ -1,21 +1,20 @@
 <?php
-  include("dbconfig.php");
-  include("friending_functions.php");
-    session_start();
-    if (isset($_SESSION['login_user'])){
-      $user_email = $_SESSION['login_user'];
-    } else {
-      $user_email = "error";
-    }
-    $load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
-    $user_accountID = mysqli_fetch_assoc(mysqli_query($conn,$load_accountID))['accountID'];
+	include("dbconfig.php");
+	include("friending_functions.php");
+  	session_start();
+  	if (isset($_SESSION['login_user'])){
+  		$user_email = $_SESSION['login_user'];
+  	} else {
+  		$user_email = "error";
+  	}
+  	$load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
+  	$user_accountID = mysqli_fetch_assoc(mysqli_query($conn,$load_accountID))['accountID'];
 
-    
-    
-    $friend_list = load_friend_list($user_accountID, $conn);
-  
-  
-    
+  	
+  	$friend_list = load_friend_list($user_accountID, $conn);
+	
+	
+ 		
 ?>
 
 <!DOCTYPE html>
@@ -62,8 +61,8 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li><a href="#">Profile</a></li>
-        <li class="active"><a href="FriendList.php">Friend list</a></li>
-        <li><a href="friend_invitation.php">Friend invitation</a></li>
+        <li class="active"><a href="#">Friend list</a></li>
+        <li><a href="#">Friend invitation</a></li>
         <li><a href="#">Friend circle</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -78,111 +77,101 @@
   <br>
   <div class="row">
   <div class="col-sm-3">
-    <?php if ($friend_list->num_rows == 0) {
-        echo "No friends yet. Go get some friends!";
-      } else {
-        while ($row = mysqli_fetch_assoc($friend_list)){
-            ?>
-              <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-              <p><?php
-          echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age'];
-           ?></p>
-          <form action="">
-            <input type="submit" class = "btn btn-warning" name="select" value="remove" />
-            <input name="a"  type="hidden" id="a" value= "<?php
-          echo $row['accountID'];?>" />
-          </form>
-          <br>
+  	<?php if ($friend_list->num_rows == 0) {
+				echo "No friends yet. Go get some friends!";
+			} else {
+				while ($row = mysqli_fetch_assoc($friend_list)){?>
+					
+      				<img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+      				<p><?php
+					echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age'];
+					 ?></p>
+					<form action="">
+    				<input type="submit" class = "btn btn-warning" name="select" value="remove" />
+    				<input name="a" type="hidden" id="a" value="a" />
+					</form>
+					<br>
 
-          <?php
-            $a=$_REQUEST["a"];
-            if ($a == $row['accountID']){
-              $friend_accountID = $row['accountID'];
-              delete_friend($user_accountID,$friend_accountID,$conn);
-              echo "<script>location.href='FriendList.php'</script>";
-            }
-          
-            }} ?>
-        
+					<?php
+						$a=$_REQUEST["a"];
+						if ($a=="a"){
+							$friend_email = $row['email_address'];
+							$load_friendID = "SELECT accountID FROM Account WHERE email_address = '$friend_email'";
+  							$friend_accountID = mysqli_fetch_assoc(mysqli_query($conn,$load_friendID))['accountID'];
+							$query_remove_friend = "DELETE FROM Friendship WHERE (friend2ID = '$user_accountID' AND friend1ID = '$friend_accountID') OR (friend2ID = '$friend_accountID' AND friend1ID = '$user_accountID')";
+							if (mysqli_query($conn,$query_remove_friend)){
+								echo "<script>location.href='FriendList.php'</script>";
+							}
+						}
+					?>
+					 
+    			<p><?php  }} ?></p>
+				
  </div>
     
     
     <div class="col-sm-5">
-    
+    <?php for ($x=0; $x<$friend_list->num_rows; $x++){?>
+    <br><br><br><br><br><br><br><br>
+      
+    <?php } ?>
     </div>
 
     <div class="col-sm-4">
      <h4>Searching for a friend:</h4>
      <br>
 
-<div class="row">
+
  <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-4">
+ <div class="row">
+  <div class="col-sm-6">
   <p>Name:
-  <input type="text" name = "name" class="form-control" placeholder="Jacky" aria-describedby="basic-addon1" > </p>
+  <input type="text" name = "name" class="form-control" placeholder="Jacky" aria-describedby="basic-addon1" value="<?php if(isset($_POST['name'])) echo $_POST['name']; ?>"> </p>
   </div> 
 
-  <div class="col-sm-2">
+  <div class="col-sm-6">
+  <p>Age: 
+  <input type="number" class="form-control" placeholder="25" aria-describedby="basic-addon1" value="<?php if(isset($_POST['age'])) echo $_POST['age']; ?>"> </p>
+  </div></div>
   <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div></form>
-
-   <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-4">
-  <p>age:
-  <input type="number" name = "age" class="form-control" placeholder="25" aria-describedby="basic-addon1"> </p>
-  </div> 
-
-  <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div></div></form>
-  
 
 <div class="row">
-
- <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-4">
+  <div class="col-sm-6">
   <p>City:
-  <input type="text" name = "city" class="form-control" placeholder="london" aria-describedby="basic-addon1" > </p>
+  <input type="text" class="form-control" placeholder="london" aria-describedby="basic-addon1" value="<?php if(isset($_POST['city'])) echo $_POST['city']; ?>"> </p>
   </div>
-  <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div></form>
 
-<form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-4">
+  <div class="col-sm-6">
   <p>Country:
-  <input type="text" name = "country" class="form-control" placeholder="U.K." aria-describedby="basic-addon1"> </p>
+  <input type="text" class="form-control" placeholder="U.K." aria-describedby="basic-addon1" value="<?php if(isset($_POST['country'])) echo $_POST['country']; ?>"> </p>
   </div>
-  <div class="col-sm-2">
+</div>
+
   <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-</div>
-</form>
-</div>
+  <div class="row">
+  <div class="col-sm-12">
+  <p>Email address:
+  <input type="text" class="form-control" placeholder="xxx@fake.com" aria-describedby="basic-addon1" value="<?php if(isset($_POST['email_address'])) echo $_POST['email_address']; ?>"> </p>
+  </div>
+  </div>
+  <br>
 
   <div class="row">
-  <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-10">
-  <p>Email address:
-  <input type="text" name = "email" class="form-control" placeholder="xxx@fake.com" aria-describedby="basic-addon1"> </p>
-  </div>
-
+    <div class="col-sm-6"></div>
 
   <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
+  <input type="submit" class = "btn btn-info" name="select" value="Search" />
   </div>
-  </form>
   </div>
   
- 
+ </form>
+
+ </div>
  </div>
  <hr>
 
 </div>
+
 
 
 <footer class="container-fluid text-center">
