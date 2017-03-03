@@ -2,7 +2,12 @@
   include('session.php');
   $selfIDQuery = mysqli_query($conn, "select accountID from account where email_address = '$user_check'");
   $row = mysqli_fetch_array($selfIDQuery);
-  $selfID = $row['accountID'];
+  if (isset($_SESSION['login_user'])){
+    $selfID = $row['accountID'];
+  } else {
+    $selfID = "error";
+  }
+
   $selfFriendsQuery = mysqli_query($conn, "select friend2ID from Friendship where friend1ID = ('$selfID') ");//why not = but IN
   if($_SERVER["REQUEST_METHOD"] == "POST"){
     $filteredName = mysqli_real_escape_string($conn,$_POST['circleName']);
@@ -43,12 +48,6 @@
     </form>
 
     <?php require_once('common_footer.html');?>
-
-    <footer class="container-fluid text-center">
-      <h5>Database Group 10
-      </h5>
-      <p>  </p>
-    </footer>
 
   </body>
 </html>

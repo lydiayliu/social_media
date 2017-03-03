@@ -15,45 +15,34 @@
       $("#chatRoom_header").addClass("active");
     </script>
     <h2>Select the circle</h2>
-    <form method = "post">
+    <form role="form" name="roomForm" method = "post" target="chatRoom" action="conversation.php">
       <?php while($circleRow = mysqli_fetch_array($circleQuery)){
         $circleID = $circleRow["circleID"];
-        $circleNameQuery = mysqli_query($conn,"select nameOfCircle from FriendCircle where circleID = $circleID");
+        $circleNameQuery = mysqli_query($conn,"select nameOfCircle from FriendCircle where circleID = $circleID ORDER BY nameOfCircle");
         $circleNameRow = mysqli_fetch_array($circleNameQuery);
         $nameOfCircle = $circleNameRow['nameOfCircle'];
         if ($_SERVER["REQUEST_METHOD"] == "POST" && $circleID == $_POST['selectedCircle']) {
-          echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\" checked>".$nameOfCircle."<br/>";
+          echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\" checked> ".$nameOfCircle."<br/>";
         }else {
-          echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\">".$nameOfCircle."<br/>";
-        }
-      }?>
-      <br/>
-      <input type="submit" value="Select">
-      <br/>
-      <br/>
-      <input type="text" name="detail" placeholder="message">
-      <input type="submit" value="send" name="sendMessage">
-    </form>
-    <?php
-      if($_SERVER["REQUEST_METHOD"] == "POST"){
-        if (isset($_POST['sendMessage'])) {
-          $filteredMessage = mysqli_real_escape_string($conn,$_POST['detail']);
-          mysqli_query($conn,"INSERT INTO Message (circleID,accountID,content) VALUES ('{$_POST['selectedCircle']}','$selfID','$filteredMessage')");
-        }
-        $selectedCircleID = $_POST['selectedCircle'];
-        $selectedMessageQuery = mysqli_query($conn,"select accountID,content from Message where circleID = ('$selectedCircleID') order by timeStamp");
-        while($messageRow = mysqli_fetch_array($selectedMessageQuery)){
-          $friendID=$messageRow['accountID'];
-          $friendNameQuery = mysqli_query($conn, "select name from Account where accountID = '$friendID' ");
-          $nameRow = mysqli_fetch_array($friendNameQuery);
-          echo $nameRow['name'].": ";
-          echo $messageRow['content'];
-          echo "<br/>";
+          echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\"> ".$nameOfCircle."<br/>";
         }
       }
-    ?>
+      ?>
+      <br/>
+      <input class="btn btn-default" type="submit" value="Select">
+      <br/><br/>
+      <input class="form-control" type="text" name="detail" placeholder="message">
+      <br/>
+      <input class="btn btn-default" type="submit" value="send" name="sendMessage">
+    </form>
+
+    <script type="text/javascript">
+        setInterval(() => document.forms['roomForm']. submit(), 5000);
+    </script>
+    <iframe name="chatRoom" scr="conversation.php"></iframe>
 
     <?php require_once('common_footer.html');?>
 
   </body>
+
 </html>
