@@ -1,5 +1,12 @@
 <?php
    include('session.php');
+   $selfIDQuery = mysqli_query($conn, "select accountID from account where email_address = '$user_check'");
+   $row = mysqli_fetch_array($selfIDQuery);
+   if (isset($_SESSION['login_user'])){
+     $selfID = $row['accountID'];
+   } else {
+     $selfID = "error";
+   }
 ?>
 <html>
 
