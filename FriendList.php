@@ -10,7 +10,7 @@
   	$load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
   	$user_accountID = mysqli_fetch_assoc(mysqli_query($conn,$load_accountID))['accountID'];
 
-  	
+ 
   	$friend_list = load_friend_list($user_accountID, $conn);
 	
 	
