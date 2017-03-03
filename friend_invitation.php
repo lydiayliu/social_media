@@ -10,10 +10,8 @@
     $load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
     $user_accountID = mysqli_fetch_assoc(mysqli_query($conn,$load_accountID))['accountID'];
 
-    
-    
-    $friend_list = load_friend_list($user_accountID, $conn);
-  
+    $friend_list = load_friend_invitation($user_accountID, $conn);
+    $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
   
     
 ?>
@@ -62,8 +60,8 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li><a href="#">Profile</a></li>
-        <li class="active"><a href="FriendList.php">Friend list</a></li>
-        <li><a href="friend_invitation.php">Friend invitation</a></li>
+        <li><a href="FriendList.php">Friend list</a></li>
+        <li class="active"><a href="friend_invitation.php">Friend invitation</a></li>
         <li><a href="#">Friend circle</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -74,21 +72,71 @@
 </nav>
 
 <div class="container">    
-  <h3>    Friend list</h3>
-  <br>
   <div class="row">
   <div class="col-sm-3">
+  <h3>    Friend invitation</h3>
     <?php if ($friend_list->num_rows == 0) {
-        echo "No friends yet. Go get some friends!";
+        echo "No friend invitations yet. <br>Go get some friends!";
       } else {
         while ($row = mysqli_fetch_assoc($friend_list)){
+          $friend_accountID = $row['accountID'];
+          if (check_inv_status($user_accountID,$friend_accountID,$conn)){
+            ?>
+              <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+              <p><?php
+          
+          echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age'];
+           ?></p>
+          <form action="">
+            <input type="submit" class = "btn btn-warning" name="select" value="Receive" />
+            <input name="a"  type="hidden" id="a" value= "<?php
+          echo $row['accountID'];?>" />
+          </form>
+          <form action="">
+            <input type="submit" class = "btn" name="select" value="Reject" />
+            <input name="b"  type="hidden" id="b" value= "<?php
+          echo $row['accountID'];?>" />
+          </form>
+          
+          <br>
+
+          <?php
+            $a=$_REQUEST["a"];
+            $b=$_REQUEST["b"];
+            if ($a == $row['accountID']){
+              accept_invitation($user_accountID,$friend_accountID,$conn);
+              echo "<script>location.href='FriendList.php'</script>";
+            }
+            if ($b == $row['accountID']){
+              reject_invitation($user_accountID,$friend_accountID,$conn);
+              echo "<script>location.href='friend_invitation.php'</script>";
+            }
+            
+          
+            }}} ?>
+        
+ </div>
+
+
+ <div class="col-sm-3">
+  <h3>    Invitations sent</h3>
+    <?php if ($sent_friend_invitation->num_rows == 0) {
+        echo "No sent invitations yet. <br>Go get some friends!";
+      } else {
+        while ($row = mysqli_fetch_assoc($sent_friend_invitation)){
+              $friend_accountID = $row['accountID'];
             ?>
               <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
               <p><?php
           echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age'];
+          $status = check_inv_status($friend_accountID,$user_accountID,$conn);
+          if (!$status){
+            echo "<br>Status: pending<br><br>";
+          } else {
+
            ?></p>
           <form action="">
-            <input type="submit" class = "btn btn-warning" name="select" value="remove" />
+            <input type="submit" class = "btn btn-warning" name="select" value="Okay" />
             <input name="a"  type="hidden" id="a" value= "<?php
           echo $row['accountID'];?>" />
           </form>
@@ -97,21 +145,21 @@
           <?php
             $a=$_REQUEST["a"];
             if ($a == $row['accountID']){
-              $friend_accountID = $row['accountID'];
-              delete_friend($user_accountID,$friend_accountID,$conn);
-              echo "<script>location.href='FriendList.php'</script>";
-            }
+              delete_invitation($user_accountID,$friend_accountID,$conn);
+              echo "<script>location.href='friend_invitation.php'</script>";
+            }}
           
-            }} ?>
+          }} ?>
         
  </div>
     
     
-    <div class="col-sm-5">
+    <div class="col-sm-2">
     
     </div>
 
     <div class="col-sm-4">
+    <br><br><br><br>
      <h4>Searching for a friend:</h4>
      <br>
 
@@ -130,7 +178,7 @@
    <form action="Searching_for_friends.php" method = "post">
   <div class="col-sm-4">
   <p>age:
-  <input type="number" name = "age" class="form-control" placeholder="25" aria-describedby="basic-addon1"> </p>
+  <input type="number" name = "age" class="form-control" placeholder="25" aria-describedby="basic-addon1">  </p>
   </div> 
 
   <div class="col-sm-2">

@@ -1,7 +1,7 @@
 <?php
   $servername = "localhost";
-  $username = "root";
-  $password = "";
+  $username = "assignment";
+  $password = "assignment";
   $dbname = "social_media";
 
   // Create connection
