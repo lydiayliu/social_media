@@ -81,13 +81,13 @@
     }
 
     function reject_invitation($user_accountID,$friend_ID,$conn){
-      $query_reject_invitation = "UPDATE Invitation SET isAccepted = 1 WHERE accountID = '$friend_ID' AND inviteeID = '$user_accountID'";
+      $query_reject_invitation = "UPDATE Invitation SET isRejected = 1 WHERE accountID = '$friend_ID' AND inviteeID = '$user_accountID'";
       mysqli_query($conn,$query_reject_invitation);
     }
 
     function check_inv_status($user_accountID,$friend_ID,$conn){
       $query_check_inv_status = "SELECT * FROM Invitation WHERE accountID = '$friend_ID' AND inviteeID = '$user_accountID'";
-      $result = mysqli_fetch_assoc(mysqli_query($conn,$query_check_inv_status))['isAccepted'];
+      $result = mysqli_fetch_assoc(mysqli_query($conn,$query_check_inv_status))['isRejected'];
       return $result;
     }
 
