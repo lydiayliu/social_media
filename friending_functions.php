@@ -35,6 +35,13 @@
       return $result;
     }
 
+    function search_by_friend($name,$conn){
+      $friend_ID = mysqli_fetch_assoc(search_by_name($name,$conn))['accountID'];
+      $query_search_by_friend = "SELECT * FROM Account WHERE accountID in (SELECT friend2ID FROM Friendship WHERE friend1ID = '$friend_ID' UNION SELECT friend1ID FROM Friendship WHERE friend2ID = '$friend_ID')";
+      $result = mysqli_query($conn,$query_search_by_friend);
+      return $result;
+    }
+
     function delete_friend($user_accountID,$friend_accountID,$conn){
       $query_remove_friend = "DELETE FROM Friendship WHERE (friend2ID = '$user_accountID' AND friend1ID = '$friend_accountID') OR (friend2ID = '$friend_accountID' AND friend1ID = '$user_accountID')";
       mysqli_query($conn,$query_remove_friend);
@@ -82,7 +89,12 @@
       $query_check_inv_status = "SELECT * FROM Invitation WHERE accountID = '$friend_ID' AND inviteeID = '$user_accountID'";
       $result = mysqli_fetch_assoc(mysqli_query($conn,$query_check_inv_status))['isAccepted'];
       return $result;
+    }
 
+    function check_privacy_status($friend_ID,$conn){
+      $query_ckeck_privacy_status = "SELECT * FROM Account WHERE accountID = 'friend_ID'";
+      $result = mysqli_fetch_assoc(mysqli_query($conn,$query_check_privacy_status))['privacy_setting'];
+      return $result;
     }
 
     function search_by_ID($friend_ID,$conn){

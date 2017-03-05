@@ -1,6 +1,7 @@
 <?php
   include("dbconfig.php");
   include("friending_functions.php");
+  #require_once('common_navbar.html');
     session_start();
     if (isset($_SESSION['login_user'])){
       $user_email = $_SESSION['login_user'];
@@ -80,12 +81,16 @@
       } else {
         while ($row = mysqli_fetch_assoc($friend_list)){
           $friend_accountID = $row['accountID'];
-          if (check_inv_status($user_accountID,$friend_accountID,$conn)){
+          $privacy_setting = check_privacy_status($friend_accountID,$conn);
+          if (!check_inv_status($user_accountID,$friend_accountID,$conn)){
             ?>
               <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
               <p><?php
-          
-          echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age'];
+          if ($privacy_setting=="public"){
+             echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self-introduction: ".$row['self-introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country'];
+            } else {
+              echo "<br>Name: ".$row['name']."<br>City: ".$row['city'];
+            }
            ?></p>
           <form action="">
             <input type="submit" class = "btn btn-warning" name="select" value="Receive" />
@@ -125,11 +130,15 @@
       } else {
         while ($row = mysqli_fetch_assoc($sent_friend_invitation)){
               $friend_accountID = $row['accountID'];
+              $privacy_setting = check_privacy_status($friend_accountID,$conn);
             ?>
               <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
               <p><?php
-          echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age'];
-          $status = check_inv_status($friend_accountID,$user_accountID,$conn);
+              if ($privacy_setting=="public"){
+             echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self-introduction: ".$row['self-introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country'];
+            } else {
+              echo "<br>Name: ".$row['name']."<br>City: ".$row['city'];
+            }
           if (!$status){
             echo "<br>Status: pending<br><br>";
           } else {
@@ -184,7 +193,7 @@
   <div class="col-sm-2">
   <br>
   <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div></div></form>
+  </div></form></div>
   
 
 <div class="row">
@@ -226,11 +235,26 @@
   </form>
   </div>
   
+  <div class="row">
+  <form action="Searching_for_friends.php" method = "post">
+  <div class="col-sm-10">
+  <p>Friends of a known friend:
+  <input type="text" name = "friend_of_f" class="form-control" placeholder="Mary" aria-describedby="basic-addon1"> </p>
+  </div>
+
+
+  <div class="col-sm-2">
+  <br>
+  <input type="submit" class = "btn btn-info" name="select" value="Go" />
+  </div>
+  </form>
+
+  </div>
  
  </div>
  <hr>
 
-</div>
+</div></div>
 
 
 <footer class="container-fluid text-center">
