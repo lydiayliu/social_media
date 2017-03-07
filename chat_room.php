@@ -16,6 +16,7 @@
   </head>
   <body>
     <?php require_once('common_navbar.html');?>
+    <div class="container">
     <script>
       $("#chatRoom_header").addClass("active");
     </script>
@@ -31,6 +32,18 @@
         }else {
           echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\"> ".$nameOfCircle."<br/>";
         }
+        $circleFriendIDQuery = mysqli_query($conn, "select accountID from CircleMembership where circleID = ('$circleID')");
+        echo "<p class=\"help-block\">Circle member: ";
+        while ($circleFriendIDRow = mysqli_fetch_array($circleFriendIDQuery)) {
+          if ($circleFriendIDRow['accountID']!=$selfID) {
+            $friendID=$circleFriendIDRow['accountID'];
+            $friendNameQuery = mysqli_query($conn, "select name from Account where accountID = ('$friendID') ");
+            $friendNameRow = mysqli_fetch_array($friendNameQuery);
+            $friendName=$friendNameRow['name'];
+            echo $friendName." ";
+          }
+        }
+        echo "</p>";
       }
       ?>
       <br/>
@@ -42,10 +55,15 @@
     </form>
 
     <script type="text/javascript">
-        setInterval(() => document.forms['roomForm']. submit(), 5000);
+        setInterval(function auto(){
+          if ($("input[name='selectedCircle']:checked").val()){
+            document.forms['roomForm'].submit();
+          }
+        }, 5000);
     </script>
     <iframe name="chatRoom" scr="conversation.php"></iframe>
-
+    <br/>
+    </div>
     <?php require_once('common_footer.html');?>
 
   </body>

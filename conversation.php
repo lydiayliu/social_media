@@ -16,6 +16,7 @@
 <html>
   <body>
     <?php
+      echo "selected<br/>";
       while($messageRow = mysqli_fetch_array($selectedMessageQuery)){
         $friendID=$messageRow['accountID'];
         $friendNameQuery = mysqli_query($conn, "select name from Account where accountID = '$friendID' ");
