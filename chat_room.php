@@ -20,6 +20,7 @@
     <script>
       $("#chatRoom_header").addClass("active");
     </script>
+    <div class="col-md-6">
     <h2>Select the circle</h2>
     <form role="form" name="roomForm" method = "post" target="chatRoom" action="conversation.php">
       <?php while($circleRow = mysqli_fetch_array($circleQuery)){
@@ -48,10 +49,15 @@
       ?>
       <br/>
       <input class="btn btn-default" type="submit" value="Select">
+      </div>
+    <div class="col-md-6">
+      <h2>Chat room</h2>
+      <iframe name="chatRoom" scr="conversation.php"></iframe>
       <br/><br/>
       <input class="form-control" type="text" name="detail" placeholder="message">
       <br/>
       <input class="btn btn-default" type="submit" value="send" name="sendMessage">
+      <br/>
     </form>
 
     <script type="text/javascript">
@@ -61,8 +67,8 @@
           }
         }, 5000);
     </script>
-    <iframe name="chatRoom" scr="conversation.php"></iframe>
     <br/>
+    </div>
     </div>
     <?php require_once('common_footer.html');?>
 
