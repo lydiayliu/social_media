@@ -48,18 +48,41 @@ if (isset($_REQUEST["delete"])) {
             or die('Error making saveToDatabase query' . mysql_error());
 }
 
+// get all collections of the account
 $query = "SELECT * FROM Collection WHERE accountID = $accountID";
-
 $result = mysqli_query($conn, $query)
         or die('Error making select collections query' . mysql_error());
-
 $k = 0;
 while ($row = mysqli_fetch_array($result)) {
     $collections[$k] = $row;
     $k = $k + 1;
 }
 
-function displayCollections($collections) {
+// get all collections that current user has access right to
+$grantedCollections = array();
+$grantedQuery = "SELECT collectionID FROM Collection WHERE"
+        . " collectionID IN (SELECT collectionID FROM friendaccessright WHERE accountID = $user_accountID "
+        . "UNION "
+        . "SELECT collectionID FROM circleaccessright INNER JOIN circlemembership ON circleaccessright.circleID = circlemembership.circleID WHERE accountID = $user_accountID)";
+$result = mysqli_query($conn, $grantedQuery)
+        or die('Error making select collections query' . mysql_error());
+$k = 0;
+while ($row = mysqli_fetch_array($result)) {
+    $grantedCollections[$k] = $row[0];
+    $k = $k + 1;
+}
+
+function hasPermission($Collection, $user_accountID, $grantedCollections) {
+    if ($Collection[1] == $user_accountID) {
+        return true;
+    }
+    if (in_array($Collection[0], $grantedCollections)) {
+        return true;
+    }
+    return false;
+}
+
+function displayCollections($collections, $user_accountID, $grantedCollections) {
 
     echo "  <div class=\"container\">
                     <div class=\"row\">
@@ -67,8 +90,8 @@ function displayCollections($collections) {
 
     for ($x = 0; $x < count($collections); $x++) {
         $Collection = $collections[$x];
-
-        echo "               
+        if (hasPermission($Collection, $user_accountID, $grantedCollections)) {
+            echo "               
                     <div class=\"post-preview\">
                         <a href=\"collection.php?collectionID=$Collection[0]\">
                             <h2 class=\"post-title\">
@@ -81,7 +104,14 @@ function displayCollections($collections) {
                     </div>
                     <hr>
                     ";
+        }
     }
+
+    echo "
+        </div>
+        </div>
+        </div>
+        ";
 }
 
 function displayNewCollectionButton() {
@@ -134,14 +164,14 @@ function displayNewCollectionButton() {
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                         <div class="site-heading">
-                            <h1><?php echo $name?>'s Photo Collections</h1>
+                            <h1><?php echo $name ?>'s Photo Collections</h1>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <?php displayCollections($collections) ?>
+        <?php displayCollections($collections, $user_accountID, $grantedCollections) ?>
 
         <?php
         if ($accountID == $user_accountID) {
@@ -150,7 +180,7 @@ function displayNewCollectionButton() {
         ?>
 
         <?php require_once('common_footer.html'); ?>
-        
+
         <!--jQuery -->
         <script src = "vendor/jquery/jquery.min.js"></script>
 

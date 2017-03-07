@@ -14,7 +14,7 @@ $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['acco
 
 $collectionID = $_GET['collectionID'];
 
-$query = "SELECT * FROM Collection WHERE collectionID = $collectionID";
+$query = "SELECT collectionID, Collection.accountID, Collection.name, description, Account.name FROM Collection INNER JOIN Account ON Collection.accountID = Account.accountID WHERE collectionID = $collectionID";
 
 $result = mysqli_query($conn, $query)
         or die('Error making select collection query' . mysql_error());
@@ -106,7 +106,7 @@ function displayEditButton($collectionID) {
                         <div class="post-heading">
                             <h1><?php echo $Collection[2] ?></h1>
                             <?php echo $Collection[3] ?>
-                            <span class="meta">Owned by <a href="#"><?php echo $Collection[1] ?></a></span>
+                            <span class="meta">Owned by <a href="#"><?php echo $Collection[4] ?></a></span>
                         </div>
                     </div>
                 </div>

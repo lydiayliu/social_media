@@ -61,7 +61,7 @@ if (isset($_POST['comment'])) {
 
 // Get comments on photo
 $comments = array();
-$query = "SELECT bpID, Comment.accountID, timestamp, comment, name FROM Comment INNER JOIN Account ON Comment.accountID = Account.accountID WHERE bpID = $bp_ID";
+$query = "SELECT bpID, Comment.accountID, timestamp, comment, name FROM Comment INNER JOIN Account ON Comment.accountID = Account.accountID WHERE bpID = $bp_ID ORDER BY timestamp ASC";
 $result = mysqli_query($conn, $query)
         or die('Error making select comments query' . mysql_error());
 $k = 0;
@@ -98,7 +98,7 @@ function displayComments($comments) {
         echo "
         <div class = \"chat-body clearfix\">
             <div class = \"header\">
-                <strong class = \"primary-font\">${Comment[1]}</strong>
+                <strong class = \"primary-font\">${Comment[4]}</strong>
                     <small class = \"pull-right text-muted\">
                         <i class = \"fa fa-clock-o fa-fw\"></i> ${Comment[2]}
                     </small>
@@ -177,7 +177,7 @@ function displayComments($comments) {
 
                         <form name="like" action='photo.php?bpID=<?php echo $bp_ID ?>' id="like" method='post'>
                             <input name="annotation" type="hidden" id="annotation" value="like" />
-                            <button type="submit" class="btn btn-default btn-xs" ><i class="glyphicon glyphicon-thumbs-up"></i></button>
+                            <button type="submit" class="btn btn-default btn-xs" ><i class="glyphicon glyphicon-thumbs-up"></i> Like </button>
                             <div class="btn-group pull-right">
                                 <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-chevron-down"></i>
@@ -188,13 +188,12 @@ function displayComments($comments) {
                                     </li>
                                     <li class="divider"></li>
                                     <?php display($annotations, 'like') ?>
-
                                 </ul>
                             </div>
                         </form>
 
                         <form name="love" action='photo.php?bpID=<?php echo $bp_ID ?>' id="love" method='post'>
-                            <button type="submit" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-heart"></i></button>
+                            <button type="submit" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-heart"></i> Love </button>
                             <input name="annotation" type="hidden" id="annotation" value="love" />
                             <div class="btn-group pull-right">
                                 <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -211,7 +210,7 @@ function displayComments($comments) {
                             </div>
                         </form>
                         <form name="sad" action='photo.php?bpID=<?php echo $bp_ID ?>' id="sad" method='post'>
-                            <button type="submit" class="btn btn-default btn-xs"><i class="em em-disappointed"></i></button>
+                            <button type="submit" class="btn btn-default btn-xs"><i class="em em-disappointed"></i> Sad  </button>
                             <input name="annotation" type="hidden" id="annotation" value="sad" />
                             <div class="btn-group pull-right">
                                 <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -228,7 +227,7 @@ function displayComments($comments) {
                             </div>
                         </form>
                         <form name="angry" action='photo.php?bpID=<?php echo $bp_ID ?>' id="angry" method='post'>
-                            <button type="submit" class="btn btn-default btn-xs"><i class="em em-angry"></i></button>
+                            <button type="submit" class="btn btn-default btn-xs"><i class="em em-angry"></i> Angry</button>
                             <input name="annotation" type="hidden" id="annotation" value="angry" />
                             <div class="btn-group pull-right">
                                 <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -281,7 +280,7 @@ function displayComments($comments) {
                 </div>
             </div>
         </div>
-
+        
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">

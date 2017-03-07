@@ -61,18 +61,6 @@ if (isset($_POST['upload'])) {
                 "VALUES ( '$user_accountID', '1', '$userpic', '$imgFile', '$collectionID')";
         $result = mysqli_query($conn, $uploadQuery)
                 or die('Error making saveToDatabase query' . mysql_error());
-//
-//        // select photo for ID
-//        $selectQuery = "SELECT bpID FROM BlogPhoto WHERE image = '$userpic'";
-//        $result = mysqli_query($conn, $selectQuery)
-//                or die('Error making select from Database query' . mysql_error());
-//        $photo = mysqli_fetch_array($result);
-//
-//        // insert photo into collection
-//        $insertQuery = "INSERT INTO CollectionMembership " .
-//                "VALUES ( '${photo[0]}', '$collectionID')";
-//        $result = mysqli_query($conn, $insertQuery)
-//                or die('Error making insert query' . mysql_error());
     }
 }
 
@@ -86,10 +74,114 @@ if (isset($_REQUEST["delete"])) {
             or die('Error making deletion query' . mysql_error());
 }
 
-//Add new permission to collection
-//Remove permission from collection
+//Add or remove circle permission to collection
+if (isset($_POST['grantcircle'])) {
+    $grantCircleID = $_POST['grantcircle'];
+    //if access right exist, remove it
+    $searchQuery = "SELECT * FROM CircleAccessRight WHERE collectionID = $collectionID AND circleID = $grantCircleID";
+    $result = mysqli_query($conn, $searchQuery)
+            or die('Error making insert comments query' . mysql_error());
+    $existingAccess = mysqli_fetch_array($result);
+    if ($existingAccess) {
+        echo 'had access';
+        $removeQuery = "DELETE FROM CircleAccessRight WHERE collectionID = $collectionID AND circleID = $grantCircleID";
+        $result = mysqli_query($conn, $removeQuery)
+                or die('Error making delete access right query' . mysql_error());
+    } else {
+        $insertQuery = "INSERT INTO CircleAccessRight VALUES ( '$collectionID', '$grantCircleID')";
+        $result = mysqli_query($conn, $insertQuery)
+                or die('Error making insert annotation query' . mysql_error());
+    }
+}
 
+// load current access rights for circles
+$rightCircles = array();
+$rightCircleQuery = mysqli_query($conn, "select FriendCircle.circleID, nameOfCircle from CircleAccessRight INNER JOIN FriendCircle ON CircleAccessRight.circleID = FriendCircle.circleID WHERE collectionID = ('$collectionID')");
+$k = 0;
+while ($row = mysqli_fetch_array($rightCircleQuery)) {
+    $rightCircles[$k] = $row;
+    $k = $k + 1;
+}
 
+// load all circles
+$circles = array();
+$circleQuery = mysqli_query($conn, "select FriendCircle.circleID, nameOfCircle from CircleMembership INNER JOIN FriendCircle ON CircleMembership.circleID = FriendCircle.circleID WHERE CircleMembership.accountID = ('$user_accountID')");
+$k = 0;
+while ($row = mysqli_fetch_array($circleQuery)) {
+    $circles[$k] = $row;
+    $k = $k + 1;
+}
+
+// remove individual access right
+if (isset($_POST['removeInd'])) {
+    $removeIndID = $_POST['removeInd'];
+    echo $removeIndID;
+    $removeQuery = "DELETE FROM FriendAccessRight WHERE collectionID = $collectionID AND accountID = $removeIndID";
+    $result = mysqli_query($conn, $removeQuery)
+            or die('Error making delete access right query' . mysql_error());
+}
+
+// add individual access right
+if (isset($_POST['grantInd'])) {
+    $grantIndID = $_POST['grantInd'];
+    echo $grantIndID;
+    $insertQuery = "INSERT INTO FriendAccessRight VALUES ( '$collectionID', '$grantIndID')";
+    $result = mysqli_query($conn, $insertQuery)
+            or die('Error making insert access right query' . mysql_error());
+}
+
+function getFriends($accountID, $conn) {
+    $friends = array();
+    $friendsQuery = "SELECT Account.accountID, name FROM Account WHERE "
+            . "(Account.accountID in (SELECT Friendship.friend1ID FROM Friendship WHERE Friendship.friend2ID = '$accountID')) OR "
+            . "(Account.accountID in (SELECT Friendship.friend2ID FROM Friendship WHERE Friendship.friend1ID = '$accountID'))";
+    $friendsQueryResult = mysqli_query($conn, $friendsQuery);
+    $k = 0;
+    while ($row = mysqli_fetch_array($friendsQueryResult)) {
+        $friends[$k] = $row;
+        $k = $k + 1;
+    }
+    return $friends;
+}
+
+// get user's friends
+$friends = getFriends($user_accountID, $conn);
+
+// load current access rights for individuals
+$rightPeople = array();
+$rightIDs = array();
+$rightPeopleQuery = mysqli_query($conn, "select Account.accountID, name from FriendAccessRight INNER JOIN Account ON FriendAccessRight.accountID = Account.accountID WHERE collectionID = ('$collectionID')");
+$k = 0;
+while ($row = mysqli_fetch_array($rightPeopleQuery)) {
+    $rightPeople[$k] = $row;
+    $rightIDs[$k] = $row[0];
+    $k = $k + 1;
+}
+echo count($rightPeople);
+
+function displayFriendsAndFriends($friends, $conn, $user_accountID, $rightIDs) {
+    for ($x = 0; $x < count($friends); $x++) {
+        $Friend = $friends[$x];
+        if (!in_array($Friend[0], $rightIDs)) {
+            echo "<option value = \"$Friend[0]\" >$Friend[1]</option>";
+        } else {
+            echo "<optgroup label = \"$Friend[1]\">";
+        }
+        $friendsOfFriend = getFriends($Friend[0], $conn);
+        for ($y = 0; $y < count($friendsOfFriend); $y++) {
+            $FFriend = $friendsOfFriend[$y];
+            // only display if not already with permission
+            if ($FFriend[0] != $user_accountID && !in_array($FFriend[0], $rightIDs)) {
+                echo "<option value = \"$FFriend[0]\" >&nbsp;&nbsp;&nbsp;$FFriend[1]</option>";
+            }
+        }
+        if (in_array($Friend[0], $rightIDs)) {
+            echo "</optgroup>";
+        }
+    }
+}
+
+// Load photos
 $query = "SELECT * FROM Collection WHERE collectionID = $collectionID";
 $result = mysqli_query($conn, $query)
         or die('Error making select collection query' . mysql_error());
@@ -105,6 +197,13 @@ $k = 0;
 while ($row = mysqli_fetch_array($result)) {
     $photos[$k] = $row;
     $k = $k + 1;
+}
+
+function displayRights($rights) {
+    for ($x = 0; $x < count($rights); $x++) {
+        $Right = $rights[$x];
+        echo "<li>" . $Right[1] . "</li>";
+    }
 }
 
 function displayPhotos($photos, $collectionID) {
@@ -132,6 +231,14 @@ function displayPhotos($photos, $collectionID) {
     echo "
         </div>
         ";
+}
+
+function displayToBeGranted($togrants) {
+    for ($x = 0; $x < count($togrants); $x++) {
+        $ToGrant = $togrants[$x];
+        echo "
+        <option value = \"$ToGrant[0]\">$ToGrant[1]</option>";
+    }
 }
 ?>
 
@@ -246,6 +353,68 @@ function displayPhotos($photos, $collectionID) {
                 </div>
             </div>
         </article>
+
+        <hr>
+
+        <!-- /.panel -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="chat-panel panel panel-default">
+                        <div class="panel-heading">
+                            Circle Access Rights
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            The following Circles have access right to this collection:
+                            <?php displayRights($rightCircles) ?>
+                            <form name="grantciricle" action='editCollection.php?collectionID=<?php echo $collectionID ?>' id="grantciricle" method='post'>
+                                <select name="grantcircle" onchange="this.form.submit()">
+                                    <option value="">Grant or Remove Access Right of Circles</option>
+                                    <?php displayToBeGranted($circles) ?>
+                                </select>
+                            </form>
+                        </div>
+                        <!-- /.panel-footer -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <hr>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="chat-panel panel panel-default">
+                        <div class="panel-heading">
+                            Individual Access Rights
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            The following Individuals have access right to this collection:
+                            <?php displayRights($rightPeople) ?>
+                            <form name="removeInd" action='editCollection.php?collectionID=<?php echo $collectionID ?>' id="removeInd" method='post'>
+                                <select name="removeInd" onchange="this.form.submit()">
+                                    <option value="">Remove Access Right of Individuals</option>
+                                    <?php displayToBeGranted($rightPeople) ?>
+                                </select>
+                            </form>
+                            <br>
+                            Grant New Access Rights:
+                            <form name="grantInd" action='editCollection.php?collectionID=<?php echo $collectionID ?>' id="grantInd" method='post'>
+                                <select name="grantInd" onchange="this.form.submit()">
+                                    <option value="">Grant Access Right to Friends and their Friends</option>
+                                    <?php displayFriendsAndFriends($friends, $conn, $user_accountID, $rightIDs) ?>
+                                </select>
+                            </form>
+                        </div>
+                        <!-- /.panel-footer -->
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <hr>
 
