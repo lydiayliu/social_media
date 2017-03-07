@@ -14,9 +14,9 @@
      $annotation_sql = "CREATE TABLE `Annotation` ( `bpID` INT NOT NULL , `accountID`INT NOT NULL , `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `annotation` SET('like', 'love', 'sad', 'angry','')  NOT NULL , PRIMARY KEY (`bpID`,`timestamp`, `accountID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`), FOREIGN KEY (`bpID`) REFERENCES BlogPhoto(`bpID`) ON DELETE CASCADE) ENGINE=InnoDB";
      $comment_sql = "CREATE TABLE `Comment` ( `bpID` INT NOT NULL , `accountID` INT NOT NULL , `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,`comment` TEXT NOT NULL , PRIMARY KEY (`bpID`, `timestamp`, `accountID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`), FOREIGN KEY (`bpID`) REFERENCES BlogPhoto(`bpID`) ON DELETE CASCADE) ENGINE=InnoDB";
      $collection_sql = "CREATE TABLE `Collection` ( `collectionID` INT AUTO_INCREMENT NOT NULL , `accountID`INT NOT NULL , `name` VARCHAR(30) NOT NULL , `description` TEXT NULL ,PRIMARY KEY (`collectionID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
-     $collectmem_sql = "CREATE TABLE `CollectionMembership` ( `bpID` INT NOT NULL ,`collectionID` INT NOT NULL , PRIMARY KEY (`bpID`, `collectionID`), FOREIGN KEY (`collectionID`) REFERENCES Collection(`collectionID`) ON DELETE CASCADE, FOREIGN KEY (`bpID`) REFERENCES BlogPhoto(`bpID`) ON DELETE CASCADE) ENGINE=InnoDB";
      $circle_sql = "CREATE TABLE `FriendCircle` ( `circleID` INT NOT NULL AUTO_INCREMENT, `accountID` INT NOT NULL , `nameOfCircle` VARCHAR(30) NOT NULL ,PRIMARY KEY (`circleID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
-     $accessright_sql = "CREATE TABLE `AccessRight` ( `collectionID` INT NOT NULL , `circleID` INT NOT NULL , PRIMARY KEY (`collectionID`,`circleID`), FOREIGN KEY (`collectionID`) REFERENCES Collection(`collectionID`) ON DELETE CASCADE, FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`) ON DELETE CASCADE) ENGINE=InnoDB";
+     $circle_as_sql = "CREATE TABLE `CircleAccessRight` ( `collectionID` INT NOT NULL , `circleID` INT NOT NULL , PRIMARY KEY (`collectionID`,`circleID`), FOREIGN KEY (`collectionID`) REFERENCES Collection(`collectionID`) ON DELETE CASCADE, FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`) ON DELETE CASCADE) ENGINE=InnoDB";
+     $friend_as_sql = "CREATE TABLE `FriendAccessRight` ( `collectionID` INT NOT NULL , `accountID` INT NOT NULL , PRIMARY KEY (`collectionID`,`accountID`), FOREIGN KEY (`collectionID`) REFERENCES Collection(`collectionID`) ON DELETE CASCADE, FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
      $friend_sql = "CREATE TABLE `Friendship` ( `friend1ID` INT NOT NULL , `friend2ID` INT NOT NULL , PRIMARY KEY (`friend1ID`,`friend2ID`), FOREIGN KEY (`friend1ID`) REFERENCES Account(`accountID`), FOREIGN KEY (`friend2ID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
      $circlemem_sql = "CREATE TABLE `CircleMembership` ( `circleID` INT NOT NULL , `accountID` INT NOT NULL , PRIMARY KEY (`circleID`,`accountID`), FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
      $message_sql = "CREATE TABLE `Message` ( `messageID` INT AUTO_INCREMENT NOT NULL, `circleID` INT NOT NULL, `accountID` INT NOT NULL, `content` TEXT NOT NULL, `timeStamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`messageID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`), FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`)) ENGINE=InnoDB";
@@ -27,9 +27,9 @@
      $conn->query($bp_sql);
      $conn->query($annotation_sql);
      $conn->query($comment_sql);
-     //$conn->query($collectmem_sql);
      $conn->query($circle_sql);
-     $conn->query($accessright_sql);
+     $conn->query($circle_as_sql);
+     $conn->query($friend_as_sql);
      $conn->query($friend_sql);
      $conn->query($circlemem_sql);
      $conn->query($message_sql);

@@ -76,22 +76,26 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
 </head>
 <body>
 
+<!--the common nav bar-->
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
+        <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="#">Logo</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="#">Profile</a></li>
-        <li class="active"><a href="FriendList.php">Friend list</a></li>
-        <li><a href="friend_invitation.php">Friend invitation</a></li>
-        <li><a href="#">Friend circle</a></li>
+        <li id="profile_header"><a href="welcome.php">Profile</a></li>
+        <li id="friendList_header"><a href="FriendList.php">Friend list</a></li>
+        <li id="friendInvitation_header"><a href="friend_invitation.php">Friend invitation</a></li>
+        <li id="selectedFriends_header"><a href="select_friends.php">Create friend circle</a></li>
+        <li id="chatRoom_header"><a href="chat_room.php">Chat room</a></li>
+        <li id="chatRoom_header"><a href="blog.php">Blog</a></li>
+        <li id="chatRoom_header"><a href="allCollections.php">Photo Collections</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -99,7 +103,6 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
     </div>
   </div>
 </nav>
-
 
   <div class="container">    
     <h3>    Friends found:</h3>
@@ -134,8 +137,8 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
               echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self-introduction: ".$row['self-introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country'];
               ?></p>
               <ul class="nav navbar-nav">
-               <li><a href="#">Photos</a></li>
-               <li class="active"><a href="#">Blogs</a></li>
+               <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
+               <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID']?>">Blog</a></li>
               </ul>
             <?php if ($isInvited){ 
               echo "<b>Invitation has been sent.</b>";
@@ -153,7 +156,7 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
            ?>
 
              <ul class="nav navbar-nav">
-              <li><a href="#">Photos</a></li>
+              <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
              </ul>
           <?php if ($isInvited){ 
             echo "<b>Invitation has been sent.</b>";
@@ -169,8 +172,8 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
               echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self-introduction: ".$row['self-introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country']."<br><b>One of your friends</b>";
            ?>
            <ul class="nav navbar-nav">
-            <li><a href="#">Photos</a></li>
-            <li class="active"><a href="#">Blogs</a></li>
+            <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
+            <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID']?>">Blog</a></li>
            </ul>  
           <?php } else {
              echo "<br>Name: ".$row['name']."<br>City: ".$row['city'];

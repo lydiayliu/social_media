@@ -92,7 +92,7 @@
     }
 
     function check_privacy_status($friend_ID,$conn){
-      $query_ckeck_privacy_status = "SELECT * FROM Account WHERE accountID = 'friend_ID'";
+      $query_check_privacy_status = "SELECT * FROM Account WHERE accountID = '$friend_ID'";
       $result = mysqli_fetch_assoc(mysqli_query($conn,$query_check_privacy_status))['privacy_setting'];
       return $result;
     }
