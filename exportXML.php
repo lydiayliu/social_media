@@ -40,7 +40,7 @@
   $xml .= "</tables>";
   $xml .="</note>";
   header ("Content-Type:text/xml");
-  file_put_contents("export.xml", $xml);
+  file_put_contents("xml/export.xml", $xml);
   echo $xml;
   echo "<!--database has be exported as export.xml-->";
   mysqli_close($conn);

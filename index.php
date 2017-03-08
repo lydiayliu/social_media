@@ -27,6 +27,12 @@
       <button type="button" id="login" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off" action:>
         Login!
       </button>
+      <button type="button" id="importXML" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
+        Import XML!
+      </button>
+      <button type="button" id="exportXML" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
+        Export XML!
+      </button>
       <script>
         $('#sign_up').on('click', function () {
           var $btn = $(this).button('loading')
@@ -36,6 +42,16 @@
         $('#login').on('click', function () {
           var $btn = $(this).button('loading')
           location.href = "login.php";
+          $btn.button('reset')
+        })
+        $('#exportXML').on('click', function () {
+          var $btn = $(this).button('loading')
+          location.href = "exportXML.php";
+          $btn.button('reset')
+        })
+        $('#importXML').on('click', function () {
+          var $btn = $(this).button('loading')
+          location.href = "importXML.php";
           $btn.button('reset')
         })
       </script>
