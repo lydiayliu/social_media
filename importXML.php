@@ -274,7 +274,7 @@
   }
   echo "Recommendation import done!<br/><br/>";
 
-  $xmlObject = $xmlDoc->getElementsByTagName('AccessRight');
+  $xmlObject = $xmlDoc->getElementsByTagName('CircleAccessRight');
   $itemCount = $xmlObject->length;
   for ($i=0; $i < $itemCount; $i++){
     $collectionID = $xmlObject->item($i)->getElementsByTagName('collectionID')->item(0)->childNodes->item(0)->nodeValue;
@@ -282,12 +282,27 @@
     $circleID  = $xmlObject->item($i)->getElementsByTagName('circleID')->item(0)->childNodes->item(0)->nodeValue;
     echo "<br/>circleID: ".$circleID;
     echo "<br/>";
-    $sql   = "INSERT INTO  `AccessRight` (`collectionID`, `circleID`) VALUES ('$collectionID', '$circleID')";
+    $sql   = "INSERT INTO  `CircleAccessRight` (`collectionID`, `circleID`) VALUES ('$collectionID', '$circleID')";
     mysqli_query($conn,$sql);
     print "Finished Item $collectionID <br/>";
     echo mysqli_error($conn)."<br/><br/>";
   }
-  echo "AccessRight import done!<br/><br/>";
+  echo "CircleAccessRight import done!<br/><br/>";
+
+  $xmlObject = $xmlDoc->getElementsByTagName('FriendAccessRight');
+  $itemCount = $xmlObject->length;
+  for ($i=0; $i < $itemCount; $i++){
+    $collectionID = $xmlObject->item($i)->getElementsByTagName('collectionID')->item(0)->childNodes->item(0)->nodeValue;
+    echo "collectionID: ".$collectionID;
+    $accountID  = $xmlObject->item($i)->getElementsByTagName('accountID')->item(0)->childNodes->item(0)->nodeValue;
+    echo "<br/>accountID: ".$accountID;
+    echo "<br/>";
+    $sql   = "INSERT INTO  `FriendAccessRight` (`collectionID`, `accountID`) VALUES ('$collectionID', '$accountID')";
+    mysqli_query($conn,$sql);
+    print "Finished Item $collectionID <br/>";
+    echo mysqli_error($conn)."<br/><br/>";
+  }
+  echo "FriendAccessRight import done!<br/><br/>";
 
   echo "Import done!<br/><br/>";
   echo mysqli_error($conn);

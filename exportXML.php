@@ -3,7 +3,7 @@
   $username = "assignment";
   $password = "";
   $dbname = "social_media";
-  $tables = array("AccessRight","Account","Annotation","BlogPhoto","CircleMembership","Collection","Comment","FriendCircle","Friendship","Invitation","Message","Recommendation");
+  $tables = array("Account","Annotation","BlogPhoto","CircleAccessRight","CircleMembership","Collection","Comment","FriendAccessRight","FriendCircle","Friendship","Invitation","Message","Recommendation");
   $conn = new mysqli($servername, $username, $password, $dbname);
   if ($conn->connect_error) {
       die("Connection failed: " . $conn->connect_error);
