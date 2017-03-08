@@ -89,7 +89,7 @@ $friend_list = load_friend_list($user_accountID, $conn);
                             ?>
                             <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
                             <p><?php
-                                if ($privacy_setting == "public") {
+                                if ($privacy_setting != "private") {
                                     echo "<br>Name: " . $row['name'] . "<br>Email address: " . $row['email_address'] . "<br>Age: " . $row['age'] . "<br>Self-introduction: " . $row['self-introduction'] . "<br>City: " . $row['city'] . "<br>Country: " . $row['country'];
                                     ?></p>
                                 <ul class="nav navbar-nav">

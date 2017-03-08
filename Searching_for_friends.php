@@ -39,9 +39,6 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
 
 
 
-  #$name = mysqli_real_escape_string($dbconn, $_POST["name"]);
-
-
 
 ?>
 
@@ -168,8 +165,8 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
              </form>
            <?php }}
           } else { 
-            if ($privacy_setting == "public") {
-              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self-introduction: ".$row['self-introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country']."<br><b>One of your friends</b>";
+            if ($privacy_setting != "private") {
+              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self-introduction: ".$row['self-introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country']."<br><b>Has been your friend</b>";
            ?>
            <ul class="nav navbar-nav">
             <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
