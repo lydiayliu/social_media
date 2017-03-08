@@ -11,9 +11,11 @@ function new_account($dbconn){
     $emailaddress = mysqli_real_escape_string($dbconn, $_POST["email_address"]);
     $city = mysqli_real_escape_string($dbconn, $_POST["city"]);
     $country = mysqli_real_escape_string($dbconn, $_POST["country"]);
+    $privacy_setting = mysqli_real_escape_string($dbconn, $_POST["privacy"]);
+    $introduction = mysql_escape_string($dbconn, $_POST["introduction"]);
 
-    $sql = "INSERT INTO account (password, age, name, email_address, city, country)
-    VALUES ('$hashedpassword', '$age', '$name', '$emailaddress', '$city', '$country') ";
+    $sql = "INSERT INTO account (password, age, name, email_address, city, country, self_introduction, privacy_setting)
+    VALUES ('$hashedpassword', '$age', '$name', '$emailaddress', '$city', '$country', '$introduction' ,'$privacy_setting') ";
 
     if ($dbconn->query($sql) === TRUE) {
         echo "Account created successfully";
@@ -22,7 +24,7 @@ function new_account($dbconn){
     }
 
 
-  }
+}
   /* Form Required Field Validation */
 
 
@@ -95,7 +97,18 @@ if (count($_POST) > 0) {
         <tr><td>City</td>
         <td><input type="text" class="demoInputBox"  name="city" value="<?php if(isset($_POST['city'])) echo $_POST['city']; ?>"></td>
         </tr>
-    		<td></td>
+        <tr><td>Introduction</td>
+        <td><textarea name="introduction" rows="5" cols="50" value="<?php if(isset($_POST['introduction'])) echo $_POST['introduction']; ?>"></textarea></td>
+        </tr>
+        <tr><td>Privacy Setting</td>
+        <td><select name="privacy">
+              <option value="public">Public</option>
+              <option value="friends_only">Friends Only</option>
+              <option value="private">Private</option>
+            </select>
+    		</td>
+        </tr>
+        <tr>
     		<td><input type="checkbox" name="terms"> I accept Terms and Conditions</td>
     		</tr>
     	</table>
