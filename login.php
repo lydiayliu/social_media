@@ -22,7 +22,12 @@
 
       if( password_verify($password, $hashed_password) && $count == 1) {
         $_SESSION['login_user'] = $user_email;
-        header("location: welcome.php");
+        $temp = $row['isAdmin'];
+        echo "<script type='text/javascript'>alert('$temp');</script>";
+        if ($row['isAdmin'] == 1)
+          header("location:admin_welcome.php");
+        else
+          header("location: welcome.php");
       } else {
         $message = "Your Login Name or Password is invalid";
       }
@@ -40,6 +45,9 @@
     <label>Email :</label><input type="text" name="email" class="box"><br/>
     <label>Password :</label><input type="password" name="password" class="box"><br/>
     <input type = "submit" value = " Submit "/><br />
+  </form>
+  <form action="register.php" target="_blank" action="">
+    <button>Register</button>
   </form>
   <div><?php if(isset($message)) echo $message; ?></div>
   </body>
