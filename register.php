@@ -12,7 +12,7 @@ function new_account($dbconn){
     $city = mysqli_real_escape_string($dbconn, $_POST["city"]);
     $country = mysqli_real_escape_string($dbconn, $_POST["country"]);
     $privacy_setting = mysqli_real_escape_string($dbconn, $_POST["privacy"]);
-    $introduction = mysql_escape_string($dbconn, $_POST["introduction"]);
+    $introduction = mysqli_escape_string($dbconn, $_POST["introduction"]);
 
     $sql = "INSERT INTO account (password, age, name, email_address, city, country, self_introduction, privacy_setting)
     VALUES ('$hashedpassword', '$age', '$name', '$emailaddress', '$city', '$country', '$introduction' ,'$privacy_setting') ";
@@ -62,6 +62,7 @@ if (count($_POST) > 0) {
     }
     else {
       new_account($conn);
+      header("location: index.php");
       $conn->close();
     }
   }
