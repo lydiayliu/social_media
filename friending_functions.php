@@ -47,10 +47,6 @@
       mysqli_query($conn,$query_remove_friend);
     }
 
-    function add_friend($user_accountID,$friend_accountID,$conn){
-      #$query_add_friend = 
-    }
-
     function send_invitation($user_accountID,$friend_ID,$conn){
       $query_send_invitation = "INSERT INTO Invitation (accountID, inviteeID) VALUES ($user_accountID,$friend_ID)";
       $result = mysqli_query($conn,$query_send_invitation);
@@ -102,4 +98,30 @@
       $result = mysqli_query($conn,$query_get_name);
       return $result;
     }
+
+    function recommend_friend($user_accountID,$conn){
+      $city_friends = search_for_similar_city($user_accountID,$conn);
+      if ($city_friends->num_rows < 3){//only one friend or no friend found
+        $result = search_for_similar_country($user_accountID,$conn);
+      } else {
+        $result = $city_friends;
+      }
+      $result = search_for_similar_country($user_accountID,$conn);
+      return $result;
+    }
+
+    function search_for_similar_city($user_accountID,$conn){
+      $user_city = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['city'];
+      $query_get_city_friends = "SELECT * FROM Account WHERE (age-20<5 OR age-20<-5) AND city LIKE '%$user_city%' LIMIT 5";
+      $result = mysqli_query($conn,$query_get_city_friends);
+      return $result;
+    }
+
+    function search_for_similar_country($user_accountID,$conn){
+      $user_country = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['country'];
+      $query_get_country_friends = "SELECT * FROM Account WHERE (age-20<5 OR age-20<-5) AND country LIKE '%$user_country%' LIMIT 5";
+      $result = mysqli_query($conn,$query_get_country_friends);
+      return $result;
+    }
+
 ?>

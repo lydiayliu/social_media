@@ -7,8 +7,7 @@
   	} else {
   		$user_email = "error";
   	}
-  	$load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
-  	$user_accountID = mysqli_fetch_assoc(mysqli_query($conn,$load_accountID))['accountID'];
+  	$user_accountID = mysqli_fetch_assoc(search_by_email($user_email,$conn))['accountID'];
 
     
     if (isset($_POST["a"])){

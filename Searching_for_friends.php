@@ -8,8 +8,7 @@ if (isset($_SESSION['login_user'])){
 } else {
   $user_email = "error";
 }
-$load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
-$user_accountID = mysqli_fetch_assoc(mysqli_query($conn,$load_accountID))['accountID'];
+$user_accountID = mysqli_fetch_assoc(search_by_email($user_email,$conn))['accountID'];
 $friend_list = load_friend_list($user_accountID, $conn);
 
 if (isset($_POST["name"])&&(!empty($_POST["name"]))){
@@ -82,7 +81,7 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand"><span class="glyphicon glyphicon-apple"></span></a>
+      <a class="navbar-brand" href="#">Logo</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
@@ -121,7 +120,7 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
                 $isFriend = true;
               }
             } ?>
-            <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+            <img src="/friendingInterface/image5.png" class="img-responsive" style="width:80%" alt="Image">
             <p>
             <?php if (!$isFriend){     
               $isInvited = false;
@@ -131,7 +130,7 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
               }
 
               if ($privacy_setting == "public") {
-              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self-introduction: ".$row['self-introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country'];
+              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self_introduction: ".$row['self_introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country'];
               ?></p>
               <ul class="nav navbar-nav">
                <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
@@ -166,7 +165,7 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
            <?php }}
           } else { 
             if ($privacy_setting != "private") {
-              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self-introduction: ".$row['self-introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country']."<br><b>Has been your friend</b>";
+              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self_introduction: ".$row['self_introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country']."<br><b>Has been your friend</b>";
            ?>
            <ul class="nav navbar-nav">
             <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
@@ -290,10 +289,9 @@ $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
 
 
               <br>
-              <footer class="container-fluid">
-                <h5>Database Group 10
-                </h5>
-              </footer>
+              
+              <?php require_once('common_footer.html');?>
+
 
 
 
