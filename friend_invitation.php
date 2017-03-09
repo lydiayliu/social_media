@@ -9,11 +9,11 @@ if (isset($_SESSION['login_user'])) {
 } else {
     $user_email = "error";
 }
-$user_accountID = mysqli_fetch_assoc(search_by_email($user_email,$conn))['accountID'];
+$user_accountID = mysqli_fetch_assoc(search_by_email($user_email, $conn))['accountID'];
 
 $friend_list = load_friend_invitation($user_accountID, $conn);
 $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
-$recommend_friend_list = recommend_friend($user_accountID,$conn);
+$recommend_friend_list = recommend_friend($user_accountID, $conn);
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +56,7 @@ $recommend_friend_list = recommend_friend($user_accountID,$conn);
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Logo</a>
+                    <a class="navbar-brand"><span class="glyphicon glyphicon-apple"></span></a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
@@ -181,76 +181,83 @@ $recommend_friend_list = recommend_friend($user_accountID,$conn);
                     <br><br><br><br>
                     <h4><span style="color:#045FB4">Recommended friends</span></h4>
                     <p><span style="color:gray">according to your location and age:</span></p>
-      <?php 
-       if ($recommend_friend_list->num_rows < 2) {
-        echo "Sorry, no users found in the same country.";
-      } else {
-        while ($row = mysqli_fetch_assoc($recommend_friend_list)){
-            $friend_accountID = $row['accountID'];
-            $isFriend = false;
-            while ($f_row = mysqli_fetch_assoc($friend_list)){
-              if ($friend_accountID==$f_row['accountID']){
-                $isFriend = true;
-              }
+                    <?php
+                    if ($recommend_friend_list->num_rows < 2) {
+                        echo "Sorry, no users found in the same country.";
+                    } else {
+                        while ($row = mysqli_fetch_assoc($recommend_friend_list)) {
+                            $friend_accountID = $row['accountID'];
+                            $isFriend = false;
+                            while ($f_row = mysqli_fetch_assoc($friend_list)) {
+                                if ($friend_accountID == $f_row['accountID']) {
+                                    $isFriend = true;
+                                }
+                            }
+                            if (($row['accountID'] != $user_accountID) && (!$isFriend)) {
+                                $privacy_setting = check_privacy_status($friend_accountID, $conn);
+                                ?>
+                                <img src="/friendingInterface/image5.png" class="img-responsive" style="width:50%" alt="Image">
+                                <p>
+                                    <?php
+                                    $isInvited = false;
+                                    while ($i_row = mysqli_fetch_assoc($sent_friend_invitation)) {
+                                        if ($row['accountID'] == $i_row['accountID']) {
+                                            $isInvited = true;
+                                        }
+                                    }
+
+                                    if ($privacy_setting == "public") {
+                                        echo "<br>Name: " . $row['name'] . "<br>Email address: " . $row['email_address'] . "<br>Age: " . $row['age'] . "<br>Self_introduction: " . $row['self_introduction'] . "<br>City: " . $row['city'] . "<br>Country: " . $row['country'];
+                                        ?></p>
+                                    <ul class="nav navbar-nav">
+                                        <li><a href="allCollections.php?accountID=<?php echo $row['accountID'] ?>">Photos</a></li>
+                                        <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID'] ?>">Blog</a></li>
+                                    </ul>
+                                    <?php
+                                    if ($isInvited) {
+                                        echo "<b>Invitation has been sent.</b>";
+                                    } else {
+                                        ?>
+                                        <form action="friending_backend.php" method="post">
+                                            <input type="submit" class = "btn btn-warning" name="select" value="Send invitation" />
+                                            <input name="a" type="hidden" id="a" value="<?php echo $row['accountID']; ?>" />
+                                        </form>
+                                        <br>
+
+                                        <?php
+                                    }
+                                } else {
+                                    echo "<br>Name: " . $row['name'] . "<br>City: " . $row['city'];
+                                    ?>
+
+                                    <ul class="nav navbar-nav">
+                                        <li><a href="allCollections.php?accountID=<?php echo $row['accountID'] ?>">Photos</a></li>
+                                    </ul>
+                                    <?php
+                                    if ($isInvited) {
+                                        echo "<b>Invitation has been sent.</b>";
+                                    } else {
+                                        ?>
+                                        <form action="friending_backend.php" method="post">
+                                            <input type="submit" class = "btn btn-warning" name="select" value="Send invitation" />
+                                            <input name="a" type="hidden" id="a" value="<?php echo $row['accountID']; ?>" />
+                                        </form>
+                <?php }
             }
-            if (($row['accountID']!=$user_accountID)&&(!$isFriend)){
-            $privacy_setting = check_privacy_status($friend_accountID,$conn);
-
-             ?>
-            <img src="/friendingInterface/image5.png" class="img-responsive" style="width:50%" alt="Image">
-            <p>
-            <?php    
-              $isInvited = false;
-              while ($i_row = mysqli_fetch_assoc($sent_friend_invitation)){
-                if ($row['accountID']==$i_row['accountID']){
-                $isInvited = true;}
-              }
-
-              if ($privacy_setting == "public") {
-              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self_introduction: ".$row['self_introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country'];
-              ?></p>
-              <ul class="nav navbar-nav">
-               <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
-               <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID']?>">Blog</a></li>
-              </ul>
-            <?php if ($isInvited){ 
-              echo "<b>Invitation has been sent.</b>";
-             } else { ?>
-             <form action="friending_backend.php" method="post">
-               <input type="submit" class = "btn btn-warning" name="select" value="Send invitation" />
-               <input name="a" type="hidden" id="a" value="<?php
-          echo $row['accountID'];?>" />
-             </form>
-             <br>
-
-           <?php
-              }} else {
-                echo "<br>Name: ".$row['name']."<br>City: ".$row['city'];
-           ?>
-
-             <ul class="nav navbar-nav">
-              <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
-             </ul>
-          <?php if ($isInvited){ 
-            echo "<b>Invitation has been sent.</b>";
-           } else { ?>
-             <form action="friending_backend.php" method="post">
-               <input type="submit" class = "btn btn-warning" name="select" value="Send invitation" />
-               <input name="a" type="hidden" id="a" value="<?php
-          echo $row['accountID'];?>" />
-             </form>
-           <?php }}
-          }}} ?>
+        }
+    }
+}
+?>
                 </div>
                 <hr>
 
             </div></div>
-            <br>
+        <br>
 
 
-    
 
-        <?php require_once('common_footer.html');?>
+
+<?php require_once('common_footer.html'); ?>
 
 
 
