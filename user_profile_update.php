@@ -24,7 +24,7 @@
 <html>
 
    <head>
-      <title>User Update </title>
+      <title>User Update</title>
       <?php require_once('head.php');?>
     </head>
 
