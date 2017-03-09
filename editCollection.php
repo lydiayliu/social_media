@@ -68,10 +68,19 @@ if (isset($_POST['upload'])) {
 if (isset($_REQUEST["delete"])) {
     $delete = $_REQUEST["delete"];
 
+    // First need information to remove from folder
+    $load_query = "SELECT accountID, image, text, timestamp, bpID FROM BlogPhoto WHERE bpID = $delete";
+    $load_result = mysqli_query($conn, $load_query)
+            or die('Error making deletion query' . mysql_error());
+    $to_delete = mysqli_fetch_array($load_result);
+
+    // Remove from database
     $delete_query = "DELETE FROM BlogPhoto WHERE bpID = $delete";
 
     $delete_result = mysqli_query($conn, $delete_query)
             or die('Error making deletion query' . mysql_error());
+    // Then remove from folder
+    unlink("images/$to_delete[1]");
 }
 
 //Add or remove circle permission to collection
@@ -130,6 +139,7 @@ if (isset($_POST['grantInd'])) {
             or die('Error making insert access right query' . mysql_error());
 }
 
+// function to get all friends of an individual
 function getFriends($accountID, $conn) {
     $friends = array();
     $friendsQuery = "SELECT Account.accountID, name FROM Account WHERE "
@@ -159,6 +169,7 @@ while ($row = mysqli_fetch_array($rightPeopleQuery)) {
 }
 echo count($rightPeople);
 
+// Show friends and their friends in drop down menu
 function displayFriendsAndFriends($friends, $conn, $user_accountID, $rightIDs) {
     for ($x = 0; $x < count($friends); $x++) {
         $Friend = $friends[$x];
