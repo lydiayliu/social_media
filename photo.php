@@ -59,6 +59,19 @@ if (isset($_POST['comment'])) {
             or die('Error making insert comments query' . mysql_error());
 }
 
+//Delete Comments
+if (isset($_POST['delete'])) {
+
+    echo "got delete";
+
+    $timeOfComment = $_POST['delete'];
+    
+    $deleteQuery = "DELETE FROM Comment WHERE bpID = $bp_ID AND accountID = $user_accountID AND timestamp = '$timeOfComment'";
+    
+    $result = mysqli_query($conn, $deleteQuery)
+            or die('Error making delete comments query' . mysql_error());
+}
+
 // Get comments on photo
 $comments = array();
 $query = "SELECT bpID, Comment.accountID, timestamp, comment, name FROM Comment INNER JOIN Account ON Comment.accountID = Account.accountID WHERE bpID = $bp_ID ORDER BY timestamp ASC";
@@ -91,22 +104,47 @@ function display($annotations, $type) {
     }
 }
 
-function displayComments($comments) {
+function displayComments($comments, $user_accountID) {
     for ($x = 0; $x < count($comments); $x++) {
         $Comment = $comments[$x];
 
-        echo "
-        <div class = \"chat-body clearfix\">
-            <div class = \"header\">
-                <strong class = \"primary-font\">${Comment[4]}</strong>
-                    <small class = \"pull-right text-muted\">
-                        <i class = \"fa fa-clock-o fa-fw\"></i> ${Comment[2]}
-                    </small>
+        if ($Comment[1] == $user_accountID) {
+            echo "
+                    <form name=\"delete\" action=\"photo.php?bpID=$Comment[0]\" id=\"delete\" method=\"post\">
+                        <div class = \"chat-body clearfix\">
+                        <div class = \"header\">
+                        <strong class = \"primary-font\">${Comment[4]}</strong>
+                            <small class = \"pull-right text-muted\">
+                                <i class = \"fa fa-clock-o fa-fw\"></i> ${Comment[2]}
+                            </small>
+                        </div>
+                        <p>
+                        ${Comment[3]}
+                        <input name=\"delete\" type=\"hidden\" id=\"delele\" value=\"$Comment[2]\" />
+                        
+                        <small class = \"pull-right text-muted\">
+                        <button type=\"submit\" class=\"btn-default btn-xs\" >
+                            <i class=\"fa fa-times\" aria-hidden=\"true\"></i>
+                        </button>
+                        </small>
+                    </p>
                 </div>
-                <p>
-                ${Comment[3]}
-                </p>
-        </div>";
+                    </form>";
+        } else {
+            echo "
+                <div class = \"chat-body clearfix\">
+                    <div class = \"header\">
+                        <strong class = \"primary-font\">${Comment[4]}</strong>
+                            <small class = \"pull-right text-muted\">
+                                <i class = \"fa fa-clock-o fa-fw\"></i> ${Comment[2]}
+                            </small>
+                        </div>
+                        <p>
+                        ${Comment[3]}";
+            echo "            
+                        </p>
+                </div>";
+        }
     }
 }
 ?>     
@@ -259,7 +297,7 @@ function displayComments($comments) {
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <ul class="chat">
-                                <?php displayComments($comments) ?>
+                                <?php displayComments($comments, $user_accountID) ?>
                             </ul>
                         </div>
                         <!-- /.panel-body -->
@@ -280,7 +318,7 @@ function displayComments($comments) {
                 </div>
             </div>
         </div>
-        
+
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">

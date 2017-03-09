@@ -21,6 +21,7 @@ if (!isset($_GET['accountID'])) {
 $load_name = "SELECT name FROM Account WHERE accountID = '$accountID'";
 $name = mysqli_fetch_assoc(mysqli_query($conn, $load_name))['name'];
 
+// delete blog post
 if (isset($_REQUEST["delete"])) {
     $delete = $_REQUEST["delete"];
 

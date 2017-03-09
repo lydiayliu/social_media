@@ -14,7 +14,45 @@ $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['acco
 
 $bp_ID = $_GET['bpID'];
 
-if (!empty($_POST)) {
+//Add Comments
+if (isset($_POST['comment'])) {
+
+    echo "got comment";
+
+    $comment = $_POST['comment'];
+
+    $commentQuery = "INSERT INTO Comment (bpID, accountID, comment) 
+                            VALUES ( '$bp_ID', '$user_accountID','$comment')";
+    $result = mysqli_query($conn, $commentQuery)
+            or die('Error making insert comments query' . mysql_error());
+}
+
+//Delete Comments
+if (isset($_POST['delete'])) {
+
+    echo "got delete";
+
+    $timeOfComment = $_POST['delete'];
+
+    $deleteQuery = "DELETE FROM Comment WHERE bpID = $bp_ID AND accountID = $user_accountID AND timestamp = '$timeOfComment'";
+
+    $result = mysqli_query($conn, $deleteQuery)
+            or die('Error making delete comments query' . mysql_error());
+}
+
+// Get comments on blog
+$comments = array();
+$query = "SELECT bpID, Comment.accountID, timestamp, comment, name FROM Comment INNER JOIN Account ON Comment.accountID = Account.accountID WHERE bpID = $bp_ID ORDER BY timestamp ASC";
+$result = mysqli_query($conn, $query)
+        or die('Error making select comments query' . mysql_error());
+$k = 0;
+while ($row = mysqli_fetch_array($result)) {
+    $comments[$k] = $row;
+    $k = $k + 1;
+}
+
+// Edit blog post
+if (isset($_POST['title']) && isset($_POST['content'])) {
 
     function getBlogPost() {
         $blogPost = array();
@@ -49,6 +87,50 @@ function displayEditButton($bp_ID) {
                 <a href=\"editBlog.php?bpID=$bp_ID\">Edit</a>
             </li>
         </ul>";
+}
+
+function displayComments($comments, $user_accountID) {
+    for ($x = 0; $x < count($comments); $x++) {
+        $Comment = $comments[$x];
+
+        if ($Comment[1] == $user_accountID) {
+            echo "
+                    <form name=\"delete\" action=\"blogPost.php?bpID=$Comment[0]\" id=\"delete\" method=\"post\">
+                        <div class = \"chat-body clearfix\">
+                        <div class = \"header\">
+                        <strong class = \"primary-font\">${Comment[4]}</strong>
+                            <small class = \"pull-right text-muted\">
+                                <i class = \"fa fa-clock-o fa-fw\"></i> ${Comment[2]}
+                            </small>
+                        </div>
+                        <p>
+                        ${Comment[3]}
+                        <input name=\"delete\" type=\"hidden\" id=\"delele\" value=\"$Comment[2]\" />
+                        
+                        <small class = \"pull-right text-muted\">
+                        <button type=\"submit\" class=\"btn-default btn-xs\" >
+                            <i class=\"fa fa-times\" aria-hidden=\"true\"></i>
+                        </button>
+                        </small>
+                    </p>
+                </div>
+                    </form>";
+        } else {
+            echo "
+                <div class = \"chat-body clearfix\">
+                    <div class = \"header\">
+                        <strong class = \"primary-font\">${Comment[4]}</strong>
+                            <small class = \"pull-right text-muted\">
+                                <i class = \"fa fa-clock-o fa-fw\"></i> ${Comment[2]}
+                            </small>
+                        </div>
+                        <p>
+                        ${Comment[3]}";
+            echo "            
+                        </p>
+                </div>";
+        }
+    }
 }
 ?>     
 
@@ -113,13 +195,47 @@ function displayEditButton($bp_ID) {
         </article>
 
         <hr>
+        <!-- /.panel -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="chat-panel panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-comments fa-fw"></i> Comments
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <ul class="chat">
+                                <?php displayComments($comments, $user_accountID) ?>
+                            </ul>
+                        </div>
+                        <!-- /.panel-body -->
+                        <div class="panel-footer">
+                            <form name="comment" action='blogPost.php?bpID=<?php echo $bp_ID ?>' id="comment" method='post'>
+                                <div class="input-group">
+                                    <input name="comment" id="comment" type="text" class="form-control input-sm" placeholder="Type your comment here..." required data-validation-required-message="Comment" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-warning btn-sm" type="submit">
+                                            Comment
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.panel-footer -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
 
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <ul class="pager">
                         <li class="next">
-                            <a href="blog.php?accountID=<?php echo $BP[0]?>">Back to Blog</a>
+                            <a href="blog.php?accountID=<?php echo $BP[0] ?>">Back to Blog</a>
                         </li>
                     </ul>
                     <?php
