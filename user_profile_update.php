@@ -1,5 +1,5 @@
 <?php
-   include('session_admin.php');
+   include('session.php');
    $user_id = $_GET['user_id'];
    include('update_user.php');
    $user_id_query =  mysqli_query($conn, "SELECT * FROM account WHERE accountID = '$user_id'");

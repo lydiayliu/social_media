@@ -1,9 +1,9 @@
 <?php
    include('session_admin.php');
-   $selfIDQuery = mysqli_query($conn, "select accountID from account where email_address = '$user_check'");
-   $row = mysqli_fetch_array($selfIDQuery);
+   $selfIDQuery = mysqli_query($conn, "select * from account where email_address = '$user_check'");
+   $self_row = mysqli_fetch_array($selfIDQuery);
    if (isset($_SESSION['login_user'])){
-     $selfID = $row['accountID'];
+     $selfID = $self_row['accountID'];
    } else {
      $selfID = "error";
    }
@@ -16,17 +16,44 @@
     </head>
 
    <body>
+
      <?php require_once('common_navbar.html');?>
      <script>
        $("#profile_header").addClass("active");
      </script>
       <h1>Welcome <?php echo $login_session; ?></h1>
-      <h2><a href = "FriendList.php">Friend list</a></h2>
-      <h2><a href="select_friends.php">Create circle of friends</a></h2>
-      <h2><a href="chat_room.php">Chat in circle of friends</a></h2>
       <h2><a href="admin_user_index.php">View all users</a></h2>
-      <h2 class = "btn btn-info"><a href = "logout.php">Sign Out</a></h2>
+      <h2><a href="admin_annotation_index.php">View all annotations/comments</a></h2>
+        <h2 class = "btn btn-info"> <?php echo "<a href = user_profile_update.php?user_id=". $selfID. ">Edit</a>";?></h2>
+        <div>
+          <table border="0" width="500" class="demo-table">
+            <tr><td>Email Address</td>
+            <td><?php echo $self_row['email_address']; ?></td>
+            </tr>
+            <tr><td>Name</td>
+            <td><?php  echo $self_row['name']; ?></td>
+            </tr>
+            <tr><td>Age</td>
+            <td><?php  echo $self_row['age']; ?></td>
+            </tr>
+            <tr><td>Country</td>
+            <td><?php  echo $self_row['country']; ?></td>
+            </tr>
+            <tr><td>City</td>
+            <td><?php echo $self_row['city']; ?></td>
+            </tr>
+            <tr><td>Introduction</td>
+            <td><p><?php  echo $self_row['self_introduction'];?></p></td>
+            </tr>
+            <tr><td>Privacy Setting</td>
+            <td><?php echo $self_row['privacy_setting']?>
+            </td>
+            </tr>
+          </table>
+        </div>
+        <h2 class = "btn btn-info"><a href = "logout.php">Sign Out</a></h2>
       <?php require_once('common_footer.html');?>
+
    </body>
 
 </html>

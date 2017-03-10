@@ -13,18 +13,31 @@ function update_account($dbconn, $account_id){
     $privacy_setting = mysqli_real_escape_string($dbconn, $_POST["privacy"]);
     $introduction = mysqli_escape_string($dbconn, $_POST["introduction"]);
 
-    $sql = "UPDATE account
-            SET password =      '$hashedpassword',
-                age =           '$age',
-                name =          '$name',
-                email_address = '$emailaddress',
-                city =          '$city',
-                country =       '$country',
-                self_introduction = '$introduction',
-                privacy_setting = '$privacy_setting'
+    if (empty($userpassword)){
+      $sql = "UPDATE account
+              SET age =           '$age',
+                  name =          '$name',
+                  email_address = '$emailaddress',
+                  city =          '$city',
+                  country =       '$country',
+                  self_introduction = '$introduction',
+                  privacy_setting = '$privacy_setting'
 
-            WHERE accountID = '$account_id'";
+              WHERE accountID = '$account_id'";
+    }
+    else {
+      $sql = "UPDATE account
+              SET password =      '$hashedpassword',
+                  age =           '$age',
+                  name =          '$name',
+                  email_address = '$emailaddress',
+                  city =          '$city',
+                  country =       '$country',
+                  self_introduction = '$introduction',
+                  privacy_setting = '$privacy_setting'
 
+              WHERE accountID = '$account_id'";
+    }
     if ($dbconn->query($sql) === TRUE)
       echo "<script type='text/javascript'>alert('Successful - Record Updated!');</script>";
     else
