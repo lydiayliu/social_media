@@ -11,7 +11,7 @@ function update_account($dbconn, $account_id){
     $city = mysqli_real_escape_string($dbconn, $_POST["city"]);
     $country = mysqli_real_escape_string($dbconn, $_POST["country"]);
     $privacy_setting = mysqli_real_escape_string($dbconn, $_POST["privacy"]);
-    $introduction = mysql_escape_string($dbconn, $_POST["introduction"]);
+    $introduction = mysqli_escape_string($dbconn, $_POST["introduction"]);
 
     $sql = "UPDATE account
             SET password =      '$hashedpassword',
@@ -20,7 +20,7 @@ function update_account($dbconn, $account_id){
                 email_address = '$emailaddress',
                 city =          '$city',
                 country =       '$country',
-                self_introduction = '$country',
+                self_introduction = '$introduction',
                 privacy_setting = '$privacy_setting'
 
             WHERE accountID = '$account_id'";
@@ -38,6 +38,10 @@ function update_account($dbconn, $account_id){
 
 if (count($_POST) > 0) {
   foreach($_POST as $key=>$value) {
+    // skip over password key field if  admin does not want to change user's password
+    if ($key == "password" || $key == "confirm_password"){
+      continue;
+    }
     if(empty($_POST[$key])) {
       $message = ucwords($key) . " field is required";
       break;
@@ -55,15 +59,10 @@ if (count($_POST) > 0) {
     }
   }
 
-  /* Validation to check if Terms and Conditions are accepted */
-  if(!isset($message)) {
-    if(!isset($_POST["terms"])) {
-      $message = "Accept Terms and conditions before submit";
-    }
-  }
+
   if (!isset($message)){
 
-    update_account($conn);
+    update_account($conn, $user_id);
     header("Refresh:0");
 
   }

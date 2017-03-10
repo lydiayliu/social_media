@@ -13,17 +13,16 @@
       $user_email = mysqli_real_escape_string($conn, $_POST['email']);
       $password = mysqli_real_escape_string($conn, $_POST['password']);
 
-      $sql = "SELECT password FROM account WHERE email_address = '$user_email'";
+      $sql = "SELECT * FROM account WHERE email_address = '$user_email'";
       $result = mysqli_query($conn, $sql);
       $count = mysqli_num_rows($result);
       $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
       $hashed_password = $row['password'];
+
       // If result matched $myusername and $mypassword, table row must be 1 row
 
       if( password_verify($password, $hashed_password) && $count == 1) {
         $_SESSION['login_user'] = $user_email;
-        $temp = $row['isAdmin'];
-        echo "<script type='text/javascript'>alert('$temp');</script>";
         if ($row['isAdmin'] == 1)
           header("location:admin_welcome.php");
         else

@@ -99,7 +99,7 @@ if (count($_POST) > 0) {
         <td><input type="text" class="demoInputBox"  name="city" value="<?php if(isset($_POST['city'])) echo $_POST['city']; ?>"></td>
         </tr>
         <tr><td>Introduction</td>
-        <td><textarea name="introduction" rows="5" cols="50" value="<?php if(isset($_POST['introduction'])) echo $_POST['introduction']; ?>"></textarea></td>
+        <td><textarea name="introduction" rows="5" cols="50" value="<?php if(isset($_POST['introduction'])) echo $_POST['introduction']; ?>"><?php if(isset($_POST['introduction'])) echo $_POST['introduction']; ?></textarea></td>
         </tr>
         <tr><td>Privacy Setting</td>
         <td><select name="privacy">

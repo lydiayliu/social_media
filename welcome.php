@@ -22,6 +22,7 @@
        $("#profile_header").addClass("active");
      </script>
       <h1>Welcome <?php echo $login_session; ?></h1>
+        <h2 class = "btn btn-info"> <?php echo "<a href = user_profile_update.php?user_id=". $selfID. ">Edit</a>";?></h2>
         <div>
           <table border="0" width="500" class="demo-table">
         		<tr><td>Email Address</td>
