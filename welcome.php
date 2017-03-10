@@ -2,6 +2,9 @@
    include('session.php');
    $selfIDQuery = mysqli_query($conn, "select * from account where email_address = '$user_check'");
    $self_row = mysqli_fetch_array($selfIDQuery);
+   if ($self_row['isAdmin'] == 1){
+     header("location:admin_welcome.php");
+   }
    if (isset($_SESSION['login_user'])){
      $selfID = $self_row['accountID'];
    } else {

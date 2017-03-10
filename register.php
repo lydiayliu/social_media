@@ -113,7 +113,11 @@ if (count($_POST) > 0) {
     		<td><input type="checkbox" name="terms"> I accept Terms and Conditions</td>
     		</tr>
     	</table>
-  	<div><input type="submit" name="submit" value="Register"></div>
+  	<div><input type="submit" name="submit" value="Register" class="btn btn-primary"></div>
   </form>
+  <form action="index.php">
+    <input type="submit" value="Index" />
+  </form>
+
   </body>
 </html>
