@@ -16,18 +16,7 @@
   $selfFriendsQuery = mysqli_query($conn, "select friend2ID from Friendship where friend1ID = ('$selfID') ");
   $selfFriendsQuery2 = mysqli_query($conn, "select friend1ID from Friendship where friend2ID = ('$selfID') ");
   $XcircleQuery = mysqli_query($conn, "select circleID from CircleMembership where accountID = ('$selfID')");
-  if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $filteredName = mysqli_real_escape_string($conn,$_POST['circleName']);
-    if(!empty($_POST['selectedFriends'])) {
-      $FriendCircleQuery = mysqli_query($conn,"INSERT INTO FriendCircle (accountID,nameOfCircle) VALUES ($selfID,'$filteredName')");
-      $circleID = mysqli_insert_id($conn);
-      $insertSelfIntoCircleQuery = mysqli_query($conn,"INSERT INTO CircleMembership (circleID,accountID) VALUES ($circleID,$selfID)");
-      foreach($_POST['selectedFriends'] as $eachFriend) {
-        mysqli_query($conn,"INSERT INTO CircleMembership (circleID,accountID) VALUES ($circleID,'$eachFriend')");
-      }
-      echo "<div class=\"alert alert-success\" role=\"alert\">Circle created!</div>";
-    }
-  }
+
 ?>
 <html>
   <head>
@@ -74,6 +63,20 @@
         <input type="submit" class="btn btn-default" value="Submit">
         <br/>
       </form>
+      <?php
+      if($_SERVER["REQUEST_METHOD"] == "POST"){
+        $filteredName = mysqli_real_escape_string($conn,$_POST['circleName']);
+        if(!empty($_POST['selectedFriends'])) {
+          $FriendCircleQuery = mysqli_query($conn,"INSERT INTO FriendCircle (accountID,nameOfCircle) VALUES ($selfID,'$filteredName')");
+          $circleID = mysqli_insert_id($conn);
+          $insertSelfIntoCircleQuery = mysqli_query($conn,"INSERT INTO CircleMembership (circleID,accountID) VALUES ($circleID,$selfID)");
+          foreach($_POST['selectedFriends'] as $eachFriend) {
+            mysqli_query($conn,"INSERT INTO CircleMembership (circleID,accountID) VALUES ($circleID,'$eachFriend')");
+          }
+          echo "<div class=\"alert alert-success\" role=\"alert\">Circle created! Go to Chat room and chat!</div>";
+        }
+      }
+      ?>
     </div>
     <div class="col-md-6">
       <h2>Current friend cirle</h2>

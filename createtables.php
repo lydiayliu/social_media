@@ -1,8 +1,8 @@
 <?php
  // DB connection info, please change for your own machine setup
  $host = "localhost";
- $user = "root";
- $pwd = "0987";
+ $user = "assignment";
+ $pwd = "";
  $db = "social_media";
  try{
      $conn = new PDO( "mysql:host=$host;dbname=$db", $user, $pwd);
@@ -19,7 +19,7 @@
      $friend_as_sql = "CREATE TABLE `FriendAccessRight` ( `collectionID` INT NOT NULL , `accountID` INT NOT NULL , PRIMARY KEY (`collectionID`,`accountID`), FOREIGN KEY (`collectionID`) REFERENCES Collection(`collectionID`) ON DELETE CASCADE, FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
      $friend_sql = "CREATE TABLE `Friendship` ( `friend1ID` INT NOT NULL , `friend2ID` INT NOT NULL , PRIMARY KEY (`friend1ID`,`friend2ID`), FOREIGN KEY (`friend1ID`) REFERENCES Account(`accountID`), FOREIGN KEY (`friend2ID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
      $circlemem_sql = "CREATE TABLE `CircleMembership` ( `circleID` INT NOT NULL , `accountID` INT NOT NULL , PRIMARY KEY (`circleID`,`accountID`), FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
-     $message_sql = "CREATE TABLE `Message` ( `messageID` INT AUTO_INCREMENT NOT NULL, `circleID` INT NOT NULL, `accountID` INT NOT NULL, `content` TEXT NOT NULL, `timeStamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`messageID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`), FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`)) ENGINE=InnoDB";
+     $message_sql = "CREATE TABLE `Message` ( `messageID` INT AUTO_INCREMENT NOT NULL, `circleID` INT NOT NULL, `accountID` INT NOT NULL, `content` TEXT NOT NULL, `timeStamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`messageID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`), FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`) ON DELETE CASCADE) ENGINE=InnoDB";
      $conn->query($account_sql);
      $conn->query($recommendation_sql);
      $conn->query($invitation_sql);

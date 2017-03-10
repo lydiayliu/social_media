@@ -22,13 +22,37 @@
     </script>
     <div class="col-md-6">
     <h2>Select the circle</h2>
+    <?php
+      $numOfCircleQuery = mysqli_query($conn, "select * from CircleMembership where accountID = ('$selfID') ");
+      if (mysqli_num_rows($numOfCircleQuery)<2) {
+        echo "You have ".mysqli_num_rows($numOfCircleQuery)." circle<br/>";
+      }else {
+        echo "You have ".mysqli_num_rows($numOfCircleQuery)." circles<br/>";
+      }
+    ?>
+    <?php
+      if (isset($_POST["leave"])) {
+        $leaveID = $_POST["leave"];
+        $friendRemainQuery = mysqli_query($conn, "select accountID from CircleMembership where circleID = '$leaveID' ");
+        $leave_query = "DELETE FROM CircleMembership WHERE accountID = ('$selfID') AND circleID = '$leaveID'";
+        $leave_result = mysqli_query($conn, $leave_query);
+        echo mysqli_error($conn)."<br/><br/>";
+        if (mysqli_num_rows($friendRemainQuery)==1) {
+          $lastCircleRow = mysqli_fetch_array($friendRemainQuery);
+          $deleteQuery = "DELETE FROM FriendCircle WHERE circleID = '$leaveID'";
+          $delete_result = mysqli_query($conn, $deleteQuery);
+          echo mysqli_error($conn)."<br/><br/>";
+        }
+        echo "<div class=\"alert alert-success\" role=\"alert\">you have already left the circle</div>";
+      }
+    ?>
     <form role="form" name="roomForm" method = "post" target="chatRoom" action="conversation.php">
       <?php while($circleRow = mysqli_fetch_array($circleQuery)){
         $circleID = $circleRow["circleID"];
         $circleNameQuery = mysqli_query($conn,"select nameOfCircle from FriendCircle where circleID = $circleID ORDER BY nameOfCircle");
         $circleNameRow = mysqli_fetch_array($circleNameQuery);
         $nameOfCircle = $circleNameRow['nameOfCircle'];
-        if ($_SERVER["REQUEST_METHOD"] == "POST" && $circleID == $_POST['selectedCircle']) {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['leave']) && $circleID == $_POST['selectedCircle']) {
           echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\" checked> ".$nameOfCircle."<br/>";
         }else {
           echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\"> ".$nameOfCircle."<br/>";
@@ -45,6 +69,8 @@
           }
         }
         echo "</p>";
+        echo "<button name:\"leave\" value\"".$circleID."\" class=\"btn btn-warning\" type=\"button\" onclick=\"myFunction(".$circleID.")\">leave this circle</button>";
+        echo "<br/>";
       }
       ?>
       <br/>
@@ -66,7 +92,21 @@
             document.forms['roomForm'].submit();
           }
         }, 5000);
+        function myFunction(circleID) {
+            var hform = document.createElement("form");
+            hform.setAttribute("method", "post");
+            hform.setAttribute("action", "");
+            hform.setAttribute("id","myForm");
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", "leave");
+            hiddenField.setAttribute("value", circleID);
+            hform.appendChild(hiddenField);
+            document.body.appendChild(hform);
+            document.getElementById("myForm").submit();
+        }
     </script>
+
     <br/>
     </div>
     </div>
