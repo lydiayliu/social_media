@@ -35,8 +35,7 @@
       return $result;
     }
 
-    function search_by_friend($name,$conn){
-      $friend_ID = mysqli_fetch_assoc(search_by_name($name,$conn))['accountID'];
+    function search_by_friend($friend_ID,$conn){
       $query_search_by_friend = "SELECT * FROM Account WHERE accountID in (SELECT friend2ID FROM Friendship WHERE friend1ID = '$friend_ID' UNION SELECT friend1ID FROM Friendship WHERE friend2ID = '$friend_ID')";
       $result = mysqli_query($conn,$query_search_by_friend);
       return $result;
@@ -60,7 +59,7 @@
     }
 
     function load_sent_friend_invitation($user_accountID,$conn){
-      $query_sent_friend_invitation = "SELECT Account.* FROM Account WHERE (Account.accountID in (SELECT Invitation.inviteeID FROM Invitation WHERE Invitation.accountID = '$user_accountID')) ";
+      $query_sent_friend_invitation = "SELECT Account.* FROM Account WHERE Account.accountID in (SELECT Invitation.inviteeID FROM Invitation WHERE Invitation.accountID = '$user_accountID') ";
       $result = mysqli_query($conn,$query_sent_friend_invitation);
       return $result;
     }
@@ -121,6 +120,12 @@
       $user_country = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['country'];
       $query_get_country_friends = "SELECT * FROM Account WHERE (age-20<5 OR age-20<-5) AND country LIKE '%$user_country%' LIMIT 5";
       $result = mysqli_query($conn,$query_get_country_friends);
+      return $result;
+    }
+
+    function mutual_friends_reco($user_accountID,$conn){
+      $query_mutual_friends_reco = "SELECT * FROM Account WHERE accountID in (SELECT ID FROM (SELECT * FROM (SELECT friend2ID AS ID, COUNT(friend2ID) as count1 FROM Friendship WHERE friend1ID IN (SELECT friend2ID FROM Friendship WHERE friend1ID = '$user_accountID' UNION SELECT friend1ID FROM Friendship WHERE friend2ID = '$user_accountID') GROUP BY friend2ID) AS temp1 UNION ALL (SELECT friend1ID AS ID, COUNT(friend1ID) AS count2 FROM Friendship WHERE friend2ID IN (SELECT friend2ID FROM Friendship WHERE friend1ID = '$user_accountID' UNION SELECT friend1ID FROM Friendship WHERE friend2ID = '$user_accountID') GROUP BY friend1ID)) as temp GROUP BY ID ORDER BY count1 DESC) AND accountID != '$user_accountID' LIMIT 5";
+      $result = mysqli_query($conn,$query_mutual_friends_reco);
       return $result;
     }
 

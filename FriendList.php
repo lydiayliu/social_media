@@ -2,6 +2,7 @@
 include("dbconfig.php");
 include("friending_functions.php");
 #require_once('common_navbar.html');
+ini_set('display_errors', 1);
 session_start();
 if (isset($_SESSION['login_user'])) {
     $user_email = $_SESSION['login_user'];
@@ -9,7 +10,7 @@ if (isset($_SESSION['login_user'])) {
     $user_email = "error";
 }
 
-$user_accountID = mysqli_fetch_assoc(search_by_email($user_email, $conn))['accountID'];
+$user_accountID = mysqli_fetch_assoc(search_by_email($user_email,$conn))['accountID'];
 
 $friend_list = load_friend_list($user_accountID, $conn);
 ?>
@@ -54,7 +55,7 @@ $friend_list = load_friend_list($user_accountID, $conn);
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand"><span class="glyphicon glyphicon-apple"></span></a>
+                    <a class="navbar-brand" href="#">Logo</a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
@@ -80,14 +81,14 @@ $friend_list = load_friend_list($user_accountID, $conn);
             <div class="row">
                 <div class="col-sm-3">
                     <?php
-                    if ($friend_list->num_rows == 0) {
-                        echo "No friends yet. Go get some friends!";
+                    if ($friend_list->num_rows == 0) { ?>
+                        <img src="image1.jpeg" class="img-responsive" style="width:100%" alt="Image"> <br> <?php echo "No friends yet. Go get some friends!";
                     } else {
                         while ($row = mysqli_fetch_assoc($friend_list)) {
                             $friend_accountID = $row['accountID'];
                             $privacy_setting = check_privacy_status($friend_accountID, $conn);
                             ?>
-                            <img src="/friendingInterface/image5.png" style="width:80%" alt="Image">
+                            <img src="image5.png" style="width:80%" alt="Image">
                             <p><?php
                                 if ($privacy_setting != "private") {
                                     echo "<br>Name: " . $row['name'] . "<br>Email address: " . $row['email_address'] . "<br>Age: " . $row['age'] . "<br>Self_introduction: " . $row['self_introduction'] . "<br>City: " . $row['city'] . "<br>Country: " . $row['country'];
@@ -97,146 +98,146 @@ $friend_list = load_friend_list($user_accountID, $conn);
                                     <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID'] ?>">Blog</a></li>
                                 </ul>
 
-                                <?php
+                            <?php
                             } else {
                                 echo "<br>Name: " . $row['name'] . "<br>City: " . $row['city'];
                                 ?></p>
 
                                 <ul class="nav navbar-nav">
                                     <li><a href="allCollections.php?accountID=<?php echo $row['accountID'] ?>">Photos</a></li>
-                                </ul>
+      </ul>
 
-                            <?php } ?>
-                            <form action="" style="text-align: right;
-                                  ">
-                                <input type="submit" class = "btn btn-warning" name="select" value="remove" />
-                                <input name="a"  type="hidden" id="a" value= "<?php
+        <?php } ?>
+          <form action="friending_backend.php" method="post" style="text-align: right;">
+            <input type="submit" class = "btn btn-warning" name="select" value="remove" />
+            <input name="b"  type="hidden" id="b" value= "<?php
                                 echo $row['accountID'];
                                 ?>" />
-                            </form>
+                                        </form>
+                                        <br>
+                                        <br>
+
+                                <?php } } ?>
+
+                            </div>
+
+
+                            <div class="col-sm-5">
+
+                            </div>
+
+                            <div class="col-sm-4">
+                                <h4>Searching for a friend:</h4>
+                                <br>
+
+                                <div class="row">
+                                    <form action="Searching_for_friends.php" method = "post">
+                                        <div class="col-sm-4">
+                                            <p>Name:
+                                                <input type="text" name = "name" class="form-control" placeholder="Jacky" aria-describedby="basic-addon1" > </p>
+                                        </div> 
+
+                                        <div class="col-sm-2">
+                                            <br>
+                                            <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                        </div></form>
+
+                                    <form action="Searching_for_friends.php" method = "post">
+                                        <div class="col-sm-4">
+                                            <p>age:
+                                                <input type="number" name = "age" class="form-control" placeholder="25" aria-describedby="basic-addon1"> </p>
+                                        </div> 
+
+                                        <div class="col-sm-2">
+                                            <br>
+                                            <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                        </div></div></form>
+
+
+                                <div class="row">
+
+                                    <form action="Searching_for_friends.php" method = "post">
+                                        <div class="col-sm-4">
+                                            <p>City:
+                                                <input type="text" name = "city" class="form-control" placeholder="london" aria-describedby="basic-addon1" > </p>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <br>
+                                            <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                        </div></form>
+
+                                    <form action="Searching_for_friends.php" method = "post">
+                                        <div class="col-sm-4">
+                                            <p>Country:
+                                                <input type="text" name = "friend" class="form-control" placeholder="U.K." aria-describedby="basic-addon1"> </p>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <br>
+                                            <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="row">
+                                    <form action="Searching_for_friends.php" method = "post">
+                                        <div class="col-sm-10">
+                                            <p>Email address:
+                                                <input type="text" name = "email" class="form-control" placeholder="xxx@fake.com" aria-describedby="basic-addon1"> </p>
+                                        </div>
+
+
+                                        <div class="col-sm-2">
+                                            <br>
+                                            <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="row">
+                                    <form action="Searching_for_friends.php" method = "post">
+                                        <div class="col-sm-10">
+                                            <p>Friends of a known friend: <br>
+                                                
+                                                <?php
+                                                $r_friend_list = load_friend_list($user_accountID, $conn);
+                                                $select = '<select name="friend_of_f">';
+                                                while ($row = mysqli_fetch_assoc($r_friend_list)) {
+                                                $friend_accountID = $row['accountID'];
+                                                $privacy_setting = check_privacy_status($friend_accountID, $conn); 
+                                                if ($privacy_setting != "private") {
+                                                    $select.='<option value="'.$row['accountID'].'">'.$row['name'].'</option>';
+                                                } } 
+                                                $select.='</select>';
+                                                echo $select;?>
+                                        </p></div>
+
+
+                                        <div class="col-sm-2">
+                                            <br>
+                                            <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                        </div>
+                                    </form>
+
+                                </div>
+
+                                <br>
+
+
+                            </div>
+                            <hr>
+
+                            </div></div>
+
+
                             <br>
-                            <br>
-
-                            <?php
-                            if (isset($_REQUEST["a"])) {
-                                $a = $_REQUEST["a"];
-                                if ($a == $row['accountID']) {
-                                    delete_friend($user_accountID, $friend_accountID, $conn);
-                                    echo "<script>location.href='FriendList.php'</script>";
-                                }
-                            }
-                        }
-                    }
-                    ?>
-
-                </div>
-
-
-                <div class="col-sm-5">
-
-                </div>
-
-                <div class="col-sm-4">
-                    <h4>Searching for a friend:</h4>
-                    <br>
-
-                    <div class="row">
-                        <form action="Searching_for_friends.php" method = "post">
-                            <div class="col-sm-4">
-                                <p>Name:
-                                    <input type="text" name = "name" class="form-control" placeholder="Jacky" aria-describedby="basic-addon1" > </p>
-                            </div> 
-
-                            <div class="col-sm-2">
-                                <br>
-                                <input type="submit" class = "btn btn-info" name="select" value="Go" />
-                            </div></form>
-
-                        <form action="Searching_for_friends.php" method = "post">
-                            <div class="col-sm-4">
-                                <p>age:
-                                    <input type="number" name = "age" class="form-control" placeholder="25" aria-describedby="basic-addon1"> </p>
-                            </div> 
-
-                            <div class="col-sm-2">
-                                <br>
-                                <input type="submit" class = "btn btn-info" name="select" value="Go" />
-                            </div></div></form>
-
-
-                    <div class="row">
-
-                        <form action="Searching_for_friends.php" method = "post">
-                            <div class="col-sm-4">
-                                <p>City:
-                                    <input type="text" name = "city" class="form-control" placeholder="london" aria-describedby="basic-addon1" > </p>
-                            </div>
-                            <div class="col-sm-2">
-                                <br>
-                                <input type="submit" class = "btn btn-info" name="select" value="Go" />
-                            </div></form>
-
-                        <form action="Searching_for_friends.php" method = "post">
-                            <div class="col-sm-4">
-                                <p>Country:
-                                    <input type="text" name = "friend" class="form-control" placeholder="U.K." aria-describedby="basic-addon1"> </p>
-                            </div>
-                            <div class="col-sm-2">
-                                <br>
-                                <input type="submit" class = "btn btn-info" name="select" value="Go" />
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="row">
-                        <form action="Searching_for_friends.php" method = "post">
-                            <div class="col-sm-10">
-                                <p>Email address:
-                                    <input type="text" name = "email" class="form-control" placeholder="xxx@fake.com" aria-describedby="basic-addon1"> </p>
-                            </div>
-
-
-                            <div class="col-sm-2">
-                                <br>
-                                <input type="submit" class = "btn btn-info" name="select" value="Go" />
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="row">
-                        <form action="Searching_for_friends.php" method = "post">
-                            <div class="col-sm-10">
-                                <p>Friends of a known friend:
-                                    <input type="text" name = "friend_of_f" class="form-control" placeholder="Mary" aria-describedby="basic-addon1"> </p>
-                            </div>
-
-
-                            <div class="col-sm-2">
-                                <br>
-                                <input type="submit" class = "btn btn-info" name="select" value="Go" />
-                            </div>
-                        </form>
-
-                    </div>
-
-                    <br>
-
-
-                </div>
-                <hr>
-
-            </div></div>
-
-
-        <br>
-        <?php require_once('common_footer.html'); ?>
+                            <?php require_once('common_footer.html');?>
 
 
 
 
-    </body>
+                            </body>
 
-</html>
+                            </html>
 
 
 
