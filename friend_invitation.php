@@ -45,32 +45,32 @@ $friend_list = load_friend_invitation($user_accountID, $conn);
     <body>
 
         <!--the common nav bar-->
-        <nav class="navbar navbar-inverse">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">Logo</a>
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav">
-                        <li id="profile_header"><a href="welcome.php">Profile</a></li>
-                        <li id="friendList_header"><a href="FriendList.php">Friend list</a></li>
-                        <li id="friendInvitation_header"><a href="friend_invitation.php">Friend invitation</a></li>
-                        <li id="selectedFriends_header"><a href="select_friends.php">Create friend circle</a></li>
-                        <li id="chatRoom_header"><a href="chat_room.php">Chat room</a></li>
-                        <li id="chatRoom_header"><a href="blog.php">Blog</a></li>
-                        <li id="chatRoom_header"><a href="allCollections.php">Photo Collections</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand"><span class="glyphicon glyphicon-apple"></span></a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li id="profile_header"><a href="welcome.php">Profile</a></li>
+        <li id="friendList_header"><a href="FriendList.php">Friend list</a></li>
+        <li id="friendInvitation_header"><a href="friend_invitation.php">Friend invitation</a></li>
+        <li id="selectedFriends_header"><a href="select_friends.php">Create friend circle</a></li>
+        <li id="chatRoom_header"><a href="chat_room.php">Chat room</a></li>
+        <li id="chatRoom_header"><a href="blog.php">Blog</a></li>
+        <li id="chatRoom_header"><a href="allCollections.php">Photo Collections</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
         <div class="container">    
             <div class="row">

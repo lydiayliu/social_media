@@ -111,14 +111,16 @@
 
     function search_for_similar_city($user_accountID,$conn){
       $user_city = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['city'];
-      $query_get_city_friends = "SELECT * FROM Account WHERE (age-20<5 OR age-20<-5) AND city LIKE '%$user_city%' LIMIT 5";
+      $user_age = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['age'];
+      $query_get_city_friends = "SELECT * FROM Account WHERE (age-$user_age<5 OR age-$user_age<-5) AND city LIKE '%$user_city%' LIMIT 5";
       $result = mysqli_query($conn,$query_get_city_friends);
       return $result;
     }
 
     function search_for_similar_country($user_accountID,$conn){
       $user_country = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['country'];
-      $query_get_country_friends = "SELECT * FROM Account WHERE (age-20<5 OR age-20<-5) AND country LIKE '%$user_country%' LIMIT 5";
+      $user_age = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['age'];
+      $query_get_country_friends = "SELECT * FROM Account WHERE (age-$user_age<5 OR age-$user_age<-5) AND country LIKE '%$user_country%' LIMIT 5";
       $result = mysqli_query($conn,$query_get_country_friends);
       return $result;
     }
