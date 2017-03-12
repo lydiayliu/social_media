@@ -5,7 +5,7 @@
        window.location = "index.php"
   </script>';
   }
-  $selfIDQuery = mysqli_query($conn, "select accountID from account where email_address = '$user_check'");
+  $selfIDQuery = mysqli_query($conn, "SELECT accountID FROM account WHERE email_address = '$user_check'");
   $row = mysqli_fetch_array($selfIDQuery);
   if (isset($_SESSION['login_user'])){
     $selfID = $row['accountID'];
@@ -13,14 +13,15 @@
     $selfID = "error";
   }
 
-  $selfFriendsQuery = mysqli_query($conn, "select friend2ID from Friendship where friend1ID = ('$selfID') ");
-  $selfFriendsQuery2 = mysqli_query($conn, "select friend1ID from Friendship where friend2ID = ('$selfID') ");
-  $XcircleQuery = mysqli_query($conn, "select circleID from CircleMembership where accountID = ('$selfID')");
+  $selfFriendsQuery = mysqli_query($conn, "SELECT friend2ID FROM Friendship WHERE friend1ID = ('$selfID') ");
+  $selfFriendsQuery2 = mysqli_query($conn, "SELECT friend1ID FROM Friendship WHERE friend2ID = ('$selfID') ");
+  $XcircleQuery = mysqli_query($conn, "SELECT circleID FROM CircleMembership WHERE accountID = ('$selfID')");
 
 ?>
 <html>
   <head>
   <?php require_once('head.php');?>
+  <title>Create Friend Cicle</title>
   </head>
   <body>
     <script src="js/jqBootstrapValidation.js"></script>
@@ -48,13 +49,13 @@
           <?php
             while($friendRow = mysqli_fetch_array($selfFriendsQuery)){
             $friendID = $friendRow["friend2ID"];
-            $friendNameQuery = mysqli_query($conn, "select name from Account where accountID = ('$friendID') ");
+            $friendNameQuery = mysqli_query($conn, "SELECT name FROM Account WHERE accountID = ('$friendID') ");
             $nameRow = mysqli_fetch_array($friendNameQuery);
             echo "<input type=\"checkbox\" name=\"selectedFriends[]\" value=\"".$friendID."\" data-validation-minchecked-minchecked=\"2\" data-validation-minchecked-message=\"Choose at least one\" >".$nameRow['name']."<br>";
           }
             while($friendRow = mysqli_fetch_array($selfFriendsQuery2)){
             $friendID = $friendRow["friend1ID"];
-            $friendNameQuery = mysqli_query($conn, "select name from Account where accountID = ('$friendID') ");
+            $friendNameQuery = mysqli_query($conn, "SELECT name FROM Account WHERE accountID = ('$friendID') ");
             $nameRow = mysqli_fetch_array($friendNameQuery);
             echo "<input type=\"checkbox\" name=\"selectedFriends[]\" value=\"".$friendID."\" data-validation-minchecked-minchecked=\"2\" data-validation-minchecked-message=\"Choose at least one\" >".$nameRow['name']."<br>";
           }?>
@@ -83,16 +84,20 @@
       <?php
         while($XcircleRow = mysqli_fetch_array($XcircleQuery)){
           $XcircleID = $XcircleRow["circleID"];
-          $XcircleNameQuery = mysqli_query($conn,"select nameOfCircle from FriendCircle where circleID = $XcircleID ORDER BY nameOfCircle");
+          $XcircleNameQuery = mysqli_query($conn,"SELECT nameOfCircle FROM FriendCircle WHERE circleID = $XcircleID ORDER BY nameOfCircle");
           $XcircleNameRow = mysqli_fetch_array($XcircleNameQuery);
           $XnameOfCircle = $XcircleNameRow['nameOfCircle'];
           echo "<h5>".$XnameOfCircle."<h5/>";
-          $XcircleFriendIDQuery = mysqli_query($conn, "select accountID from CircleMembership where circleID = ('$XcircleID')");
+          $XcircleFriendIDQuery = mysqli_query($conn, "SELECT accountID FROM CircleMembership WHERE circleID = ('$XcircleID')");
           echo "<p class=\"help-block\">Circle member: ";
+          $selfNameQuery = mysqli_query($conn, "SELECT name FROM Account WHERE accountID = ('$selfID') ");
+          $selfNameRow = mysqli_fetch_array($selfNameQuery);
+          $selfName=$selfNameRow['name'];
+          echo $selfName." ";
           while ($XcircleFriendIDRow = mysqli_fetch_array($XcircleFriendIDQuery)) {
             if ($XcircleFriendIDRow['accountID']!=$selfID) {
               $XfriendID=$XcircleFriendIDRow['accountID'];
-              $XfriendNameQuery = mysqli_query($conn, "select name from Account where accountID = ('$XfriendID') ");
+              $XfriendNameQuery = mysqli_query($conn, "SELECT name FROM Account WHERE accountID = ('$XfriendID') ");
               $XfriendNameRow = mysqli_fetch_array($XfriendNameQuery);
               $XfriendName=$XfriendNameRow['name'];
               echo $XfriendName." ";

@@ -5,7 +5,7 @@
   if($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach($_POST as $key=>$value) {
       if(empty($_POST[$key])) {
-        $message = ucwords($key) . " field is required";
+        $message = "<div class=\"alert alert-danger\">" . ucwords($key) . " field is required!</div>";
         break;
       }
     }
@@ -28,7 +28,7 @@
         else
           header("location: welcome.php");
       } else {
-        $message = "Your Login Name or Password is invalid";
+        $message = "<div class=\"alert alert-danger\">Your Login Name or Password is invalid!</div>";
       }
     }
   }
@@ -38,16 +38,21 @@
 <html>
   <head>
     <title>Login Page</title>
+    <?php require_once('head.php');?>
   </head>
-  <div ><b>Login</b></div>
-  <form action = "" method = "post">
-    <label>Email :</label><input type="text" name="email" class="box"><br/>
-    <label>Password :</label><input type="password" name="password" class="box"><br/>
-    <input type = "submit" value = " Submit "/><br />
+  <div class="container">
+  <div class="col-md-4">
+  <form action = "" method = "post" class = "form-signin" role = "form">
+    <h1 class= "form-signin-heading">Login</h1>
+    <label>Email :</label><input type="text" name="email" class="form-control"><br/>
+    <label>Password :</label><input type="password" name="password" class="form-control"><br/>
+    <?php if(isset($message)) echo $message; ?>
+    <input class = "btn btn-lg btn-primary btn-block" type = "submit" value = "Submit"/><br />
   </form>
   <form action="register.php" target="_blank" action="">
-    <button>Register</button>
+    <button class="btn btn-default">Register</button>
   </form>
-  <div><?php if(isset($message)) echo $message; ?></div>
+  </div>
+  </div>
   </body>
 </html>

@@ -5,14 +5,15 @@
        window.location = "index.php"
   </script>';
   }
-  $selfIDQuery = mysqli_query($conn, "select accountID from account where email_address = '$user_check'");
+  $selfIDQuery = mysqli_query($conn, "SELECT accountID FROM account WHERE email_address = '$user_check'");
   $row = mysqli_fetch_array($selfIDQuery);
   $selfID = $row['accountID'];
-  $circleQuery = mysqli_query($conn, "select circleID from CircleMembership where accountID = ('$selfID')");
+  $circleQuery = mysqli_query($conn, "SELECT circleID FROM CircleMembership WHERE accountID = ('$selfID')");
 ?>
 <html>
   <head>
   <?php require_once('head.php');?>
+  <title>Chat Room</title>
   </head>
   <body>
     <?php require_once('common_navbar.html');?>
@@ -23,7 +24,7 @@
     <div class="col-md-6">
     <h2>Select the circle</h2>
     <?php
-      $numOfCircleQuery = mysqli_query($conn, "select * from CircleMembership where accountID = ('$selfID') ");
+      $numOfCircleQuery = mysqli_query($conn, "SELECT * FROM CircleMembership WHERE accountID = ('$selfID') ");
       if (mysqli_num_rows($numOfCircleQuery)<2) {
         echo "You have ".mysqli_num_rows($numOfCircleQuery)." circle<br/>";
       }else {
@@ -33,7 +34,7 @@
     <?php
       if (isset($_POST["leave"])) {
         $leaveID = $_POST["leave"];
-        $friendRemainQuery = mysqli_query($conn, "select accountID from CircleMembership where circleID = '$leaveID' ");
+        $friendRemainQuery = mysqli_query($conn, "SELECT accountID FROM CircleMembership WHERE circleID = '$leaveID' ");
         $leave_query = "DELETE FROM CircleMembership WHERE accountID = ('$selfID') AND circleID = '$leaveID'";
         $leave_result = mysqli_query($conn, $leave_query);
         echo mysqli_error($conn)."<br/><br/>";
@@ -49,20 +50,25 @@
     <form role="form" name="roomForm" method = "post" target="chatRoom" action="conversation.php">
       <?php while($circleRow = mysqli_fetch_array($circleQuery)){
         $circleID = $circleRow["circleID"];
-        $circleNameQuery = mysqli_query($conn,"select nameOfCircle from FriendCircle where circleID = $circleID ORDER BY nameOfCircle");
+        $circleNameQuery = mysqli_query($conn,"SELECT nameOfCircle FROM FriendCircle WHERE circleID = $circleID ORDER BY nameOfCircle");
         $circleNameRow = mysqli_fetch_array($circleNameQuery);
         $nameOfCircle = $circleNameRow['nameOfCircle'];
+        echo "<br/>";
         if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['leave']) && $circleID == $_POST['selectedCircle']) {
           echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\" checked> ".$nameOfCircle."<br/>";
         }else {
           echo "<input type=\"radio\" name=\"selectedCircle\" value=\"".$circleID."\"> ".$nameOfCircle."<br/>";
         }
-        $circleFriendIDQuery = mysqli_query($conn, "select accountID from CircleMembership where circleID = ('$circleID')");
+        $circleFriendIDQuery = mysqli_query($conn, "SELECT accountID FROM CircleMembership WHERE circleID = ('$circleID')");
         echo "<p class=\"help-block\">Circle member: ";
+        $selfNameQuery = mysqli_query($conn, "SELECT name FROM Account WHERE accountID = ('$selfID') ");
+        $selfNameRow = mysqli_fetch_array($selfNameQuery);
+        $selfName=$selfNameRow['name'];
+        echo $selfName." ";
         while ($circleFriendIDRow = mysqli_fetch_array($circleFriendIDQuery)) {
           if ($circleFriendIDRow['accountID']!=$selfID) {
             $friendID=$circleFriendIDRow['accountID'];
-            $friendNameQuery = mysqli_query($conn, "select name from Account where accountID = ('$friendID') ");
+            $friendNameQuery = mysqli_query($conn, "SELECT name FROM Account WHERE accountID = ('$friendID') ");
             $friendNameRow = mysqli_fetch_array($friendNameQuery);
             $friendName=$friendNameRow['name'];
             echo $friendName." ";
