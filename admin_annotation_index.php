@@ -65,9 +65,9 @@
               <td><a href="admin_user_update.php?user_id=' . $annotation_row['accountID'] . '">'. $annotation_row['email_address'] . '</a></td>
               <td>' .$annotation_row['name'].'</td>
               <td> Annotation </td>
-              <td>'. $annotation_row['annotation'].'</td>
-              <td>'. $annotation_row['photoID'].'</td>
-              <td>'. $annotation_row['timestamp'].'</td>
+              <td>'. $annotation_row['annotation'].'</td>';
+        echo ' <td><a href="photo.php?photoID=' . $annotation_row["photoID"] . '">' . $annotation_row['photoID'] . '</a></td>';
+        echo '<td>'. $annotation_row['timestamp'].'</td>
               <td>
                 <form name="deleteAnnotation" action="admin_annotation_index.php" id="delete" method="post">
                     <input name="deleteAnnotation" type="hidden" id="d}elele" value="1"/>
@@ -86,9 +86,9 @@
               <td><a href="admin_user_update.php?user_id=' . $comment_row['accountID'] . '">'. $comment_row['email_address'] . '</a></td>
               <td>' .$comment_row['name'].'</td>
               <td> Commented </td>
-              <td>' .substr($comment_row['comment'], 0, 10). '</td>
-              <td>'. $comment_row['photoID'].'</td>
-              <td>'. $comment_row['timestamp'].'</td>
+              <td>' .substr($comment_row['comment'], 0, 10). '</td>';
+        echo ' <td><a href="photo.php?photoID=' . $comment_row["photoID"] . '">' . $comment_row['photoID'] . '</a></td>';
+        echo '<td>'. $comment_row['timestamp'].'</td>
               <td>
                 <form name="deleteAnnotation" action="admin_annotation_index.php" id="delete" method="post">
                     <input name="deleteComment" type="hidden" id="d}elele" value="1"/>
