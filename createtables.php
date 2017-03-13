@@ -1,12 +1,14 @@
 <?php
  // DB connection info, please change for your own machine setup
- $host = "localhost";
- $user = "root";
- $pwd = "0987";
- $db = "social_media";
+  $servername = "eu-cdbr-azure-west-d.cloudapp.net";
+  $username = "b3ecadc66c8aa5";
+  $password = "fda61879";
+  $dbname = "socialmediadb";
+  
  try{
-     $conn = new PDO( "mysql:host=$host;dbname=$db", $user, $pwd);
-     $conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+     //$conn = new PDO( "mysql:host=$host;dbname=$db", $user, $pwd);
+     //$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+     $conn = new mysqli($servername, $username, $password, $dbname);
      $account_sql = "CREATE TABLE `Account` ( `accountID` INT AUTO_INCREMENT NOT NULL ,`password` VARCHAR(255) NOT NULL , `isAdmin` BOOLEAN NOT NULL DEFAULT FALSE, `age` INT(2) NOT NULL , `name` VARCHAR(30) NOT NULL , `email_address` VARCHAR(30) NOT NULL , `city` VARCHAR(15) NULL , `country` VARCHAR(15) NULL , `self_introduction` TEXT NULL ,`privacy_setting` SET('friends_only','public','private','') NULL DEFAULT 'friends_only' , PRIMARY KEY (`accountID`), UNIQUE(email_address)) ENGINE=InnoDB";
      $recommendation_sql = "CREATE TABLE `Recommendation` ( `accountID` INT NOT NULL ,`recommendeeID` INT NOT NULL , `reason` TEXT NULL , PRIMARY KEY(`accountID`, `recommendeeID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`), FOREIGN KEY (`recommendeeID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
      $invitation_sql = "CREATE TABLE `Invitation` ( `accountID` INT NOT NULL ,`inviteeID` INT NOT NULL , `isRejected` BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY (`accountID`, `inviteeID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`), FOREIGN KEY (`inviteeID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";

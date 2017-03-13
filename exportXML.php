@@ -1,13 +1,8 @@
 <?php
-  $servername = "localhost";
-  $username = "assignment";
-  $password = "";
-  $dbname = "social_media";
+include("dbconfig.php");
+
   $tables = array("Account","Annotation","Blog","CircleAccessRight","CircleMembership","Collection","Comment","FriendAccessRight","FriendCircle","Friendship","Photo","Invitation","Message","Recommendation");
-  $conn = new mysqli($servername, $username, $password, $dbname);
-  if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
-  }
+
   $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
   $xml .="<note
     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
