@@ -1,13 +1,12 @@
 <?php
 include("dbconfig.php");
 session_start();
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    foreach ($_POST as $key => $value) {
-        if (empty($_POST[$key])) {
-            $message = ucwords($key) . " field is required";
-            break;
-        }
+  if($_SERVER["REQUEST_METHOD"] == "POST") {
+    foreach($_POST as $key=>$value) {
+      if(empty($_POST[$key])) {
+        $message = "<div class=\"alert alert-danger\">" . ucwords($key) . " field is required!</div>";
+        break;
+      }
     }
     if (!isset($message)) {
         $user_email = mysqli_real_escape_string($conn, $_POST['email']);
@@ -21,15 +20,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // If result matched $myusername and $mypassword, table row must be 1 row
 
-        if (password_verify($password, $hashed_password) && $count == 1) {
-            $_SESSION['login_user'] = $user_email;
-            if ($row['isAdmin'] == 1)
-                header("location:admin_welcome.php");
-            else
-                header("location: welcome.php");
-        } else {
-            $message = "Your Login Name or Password is invalid";
-        }
+      if( password_verify($password, $hashed_password) && $count == 1) {
+        $_SESSION['login_user'] = $user_email;
+        if ($row['isAdmin'] == 1)
+          header("location:admin_welcome.php");
+        else
+          header("location: welcome.php");
+      } else {
+        $message = "<div class=\"alert alert-danger\">Your Login Name or Password is invalid!</div>";
+      }
     }
 }
 $conn->close();
@@ -55,7 +54,7 @@ $conn->close();
                 <input class="btn btn-primary" type = "submit" value = " Submit "/><br />
             </form>
             <form action="index.php">
-                <input class="btn btn-primary" type="submit" value="Index" />
+                <input class="btn btn-primary" type="submit" value="Home Page" />
             </form>
             <div><?php if (isset($message)) echo $message; ?></div>
         </div>
