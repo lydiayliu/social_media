@@ -1,8 +1,6 @@
 <?php
 include("dbconfig.php");
-
   $tables = array("Account","Annotation","Blog","CircleAccessRight","CircleMembership","Collection","Comment","FriendAccessRight","FriendCircle","Friendship","Photo","Invitation","Message","Recommendation");
-
   $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
   $xml .="<note
     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
@@ -34,9 +32,15 @@ include("dbconfig.php");
   }
   $xml .= "</tables>";
   $xml .="</note>";
-  header ("Content-Type:text/xml");
   file_put_contents("xml/export.xml", $xml);
-  echo $xml;
-  echo "<!--database has be exported as export.xml-->";
   mysqli_close($conn);
 ?>
+<html>
+  <head>
+    <title>Export XML</title>
+    <?php require_once('head.php'); ?>
+  </head>
+  <body>
+    <a href="xml/export.xml" class="btn btn-default" role="button" download>Download the xml</a>
+  </body>
+</html>
