@@ -29,6 +29,8 @@
                   <th> User ID </th>
                   <th> Name </th>
                   <th> Role  </th>
+                  <th> Blog </th>
+                  <th> Photo collection </th>
             </tr>';
       while($user_row = mysqli_fetch_array($users_query)){
         echo '<tr>
@@ -39,6 +41,8 @@
                         echo 'Admin</td>';
                       else
                         echo 'User</td>';
+              echo '<td> <a href="photo.php?accountID=' . $user_row['accountID'] . '">Blogs</a></td>';
+              echo '<td> <a href="blog.php?accountID=' . $user_row['accountID'] . '">Blogs</a></td>';
               echo '</tr>';
       }
       echo '</table>'; ?>
