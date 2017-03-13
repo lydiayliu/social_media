@@ -18,9 +18,9 @@ echo($user_accountID);
 $accountID = $_GET['accountID'];
 $search = $_POST['search'];
 
-$query = "SELECT * FROM (SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC) AS sub WHERE title LIKE '%{$search}%' OR text LIKE '%{$search}%'";
+$search_blogs_query = "SELECT * FROM (SELECT accountID, title, text, timestamp, blogID FROM Blog WHERE accountID = $accountID ORDER BY timestamp DESC) AS sub WHERE title LIKE '%{$search}%' OR text LIKE '%{$search}%'";
 
-$result = mysqli_query($conn, $query)
+$result = mysqli_query($conn, $search_blogs_query)
         or die('Error making search query' . mysql_error());
 
 $k = 0;
@@ -43,7 +43,7 @@ function displayBP($blogPosts) {
 
         echo "               
                     <div class=\"post-preview\">
-                        <a href=\"blogPost.php?bpID=$BP[4]\">
+                        <a href=\"blogPost.php?blogID=$BP[4]\">
                             <h2 class=\"post-title\">
                                 $BP[1]
                             </h2>

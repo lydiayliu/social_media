@@ -14,19 +14,18 @@ $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['acco
 
 $collectionID = $_GET['collectionID'];
 
-$query = "SELECT collectionID, Collection.accountID, Collection.name, description, Account.name FROM Collection INNER JOIN Account ON Collection.accountID = Account.accountID WHERE collectionID = $collectionID";
-
-$result = mysqli_query($conn, $query)
+$selection_collection_query = "SELECT collectionID, Collection.accountID, Collection.name, description, Account.name FROM Collection INNER JOIN Account ON Collection.accountID = Account.accountID WHERE collectionID = $collectionID";
+$result = mysqli_query($conn, $selection_collection_query)
         or die('Error making select collection query' . mysql_error());
-
 $Collection = mysqli_fetch_array($result);
+$title = str_replace("''", "'", $Collection[2]);
+$description = str_replace("''", "'", $Collection[3]);
 
 $photos = array();
-$query = "SELECT accountID, image, text, timestamp, bpID FROM BlogPhoto WHERE collectionID = $collectionID ORDER BY timestamp DESC";
+$select_photos_query = "SELECT accountID, image, title, timestamp, photoID FROM Photo WHERE collectionID = $collectionID ORDER BY timestamp DESC";
 
-$result = mysqli_query($conn, $query)
+$result = mysqli_query($conn, $select_photos_query)
         or die('Error making select photos query' . mysql_error());
-
 $k = 0;
 while ($row = mysqli_fetch_array($result)) {
     $photos[$k] = $row;
@@ -45,7 +44,7 @@ function displayPhotos($photos, $collectionID) {
                 <div class=\"thumbnail\">
                     <img src=\"images/$Photo[1]\">
                     <div class=\"caption\">
-                        <a class=\"btn btn-default\" href=\"photo.php?bpID=$Photo[4]\">View</a>
+                        <a class=\"btn btn-default\" href=\"photo.php?photoID=$Photo[4]\">View</a>
                     </div>
                 </div>
             </div>         ";
@@ -74,7 +73,7 @@ function displayEditButton($collectionID) {
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title><?php echo $Collection[2] ?></title>
+        <title><?php echo $title ?></title>
 
         <!-- Bootstrap Core CSS -->
         <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -104,8 +103,8 @@ function displayEditButton($collectionID) {
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                         <div class="post-heading">
-                            <h1><?php echo $Collection[2] ?></h1>
-                            <?php echo $Collection[3] ?>
+                            <h1><?php echo $title ?></h1>
+                            <?php echo $description ?>
                             <span class="meta">Owned by <a href="#"><?php echo $Collection[4] ?></a></span>
                         </div>
                     </div>

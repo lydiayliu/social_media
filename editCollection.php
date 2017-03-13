@@ -16,14 +16,13 @@ $collectionID = $_GET['collectionID'];
 
 //Edit name or description of collection
 if (isset($_POST['title']) && isset($_POST['description'])) {
-    $newName = $_POST['title'];
-    $newDescription = $_POST['description'];
-
-    $editQuery = "UPDATE Collection
+    $newName = str_replace("'", "\'\'", $_POST['title']);
+    $newDescription = str_replace("'", "\'\'", $_POST['description']);
+    $edit_collection_Query = "UPDATE Collection
                             SET name='$newName',
                                 description='$newDescription'
                                 WHERE collectionID='$collectionID'";
-    mysqli_query($conn, $editQuery);
+    mysqli_query($conn, $edit_collection_Query);
 }
 
 //Add new photo to collection
@@ -57,10 +56,10 @@ if (isset($_POST['upload'])) {
     // if no error occured, continue ....
     if (!isset($errMSG)) {
         // insert photo into database
-        $uploadQuery = "INSERT INTO BlogPhoto (accountID, isPhoto, image, text, collectionID) " .
-                "VALUES ( '$user_accountID', '1', '$userpic', '$imgFile', '$collectionID')";
-        $result = mysqli_query($conn, $uploadQuery)
-                or die('Error making saveToDatabase query' . mysql_error());
+        $upload_photo_Query = "INSERT INTO Photo (accountID, image, title, collectionID) " .
+                "VALUES ( '$user_accountID', '$userpic', '$imgFile', '$collectionID')";
+        $result = mysqli_query($conn, $upload_photo_Query)
+                or die('Error making upload photo query' . mysql_error());
     }
 }
 
@@ -69,16 +68,16 @@ if (isset($_REQUEST["delete"])) {
     $delete = $_REQUEST["delete"];
 
     // First need information to remove from folder
-    $load_query = "SELECT accountID, image, text, timestamp, bpID FROM BlogPhoto WHERE bpID = $delete";
-    $load_result = mysqli_query($conn, $load_query)
-            or die('Error making deletion query' . mysql_error());
+    $load_photo_query = "SELECT accountID, image, title, timestamp, photoID FROM Photo WHERE photoID = $delete";
+    $load_result = mysqli_query($conn, $load_photo_query)
+            or die('Error making load photo query' . mysql_error());
     $to_delete = mysqli_fetch_array($load_result);
 
     // Remove from database
-    $delete_query = "DELETE FROM BlogPhoto WHERE bpID = $delete";
+    $delete_photo_query = "DELETE FROM Photo WHERE photoID = $delete";
 
-    $delete_result = mysqli_query($conn, $delete_query)
-            or die('Error making deletion query' . mysql_error());
+    $delete_result = mysqli_query($conn, $delete_photo_query)
+            or die('Error making delete photo query' . mysql_error());
     // Then remove from folder
     unlink("images/$to_delete[1]");
 }
@@ -87,36 +86,35 @@ if (isset($_REQUEST["delete"])) {
 if (isset($_POST['grantcircle'])) {
     $grantCircleID = $_POST['grantcircle'];
     //if access right exist, remove it
-    $searchQuery = "SELECT * FROM CircleAccessRight WHERE collectionID = $collectionID AND circleID = $grantCircleID";
-    $result = mysqli_query($conn, $searchQuery)
-            or die('Error making insert comments query' . mysql_error());
+    $selectCirRightQuery = "SELECT * FROM CircleAccessRight WHERE collectionID = $collectionID AND circleID = $grantCircleID";
+    $result = mysqli_query($conn, $selectCirRightQuery)
+            or die('Error making select circle rights query' . mysql_error());
     $existingAccess = mysqli_fetch_array($result);
     if ($existingAccess) {
-        echo 'had access';
-        $removeQuery = "DELETE FROM CircleAccessRight WHERE collectionID = $collectionID AND circleID = $grantCircleID";
-        $result = mysqli_query($conn, $removeQuery)
-                or die('Error making delete access right query' . mysql_error());
+        $removeCirRightQuery = "DELETE FROM CircleAccessRight WHERE collectionID = $collectionID AND circleID = $grantCircleID";
+        $result = mysqli_query($conn, $removeCirRightQuery)
+                or die('Error making delete circle access right query' . mysql_error());
     } else {
-        $insertQuery = "INSERT INTO CircleAccessRight VALUES ( '$collectionID', '$grantCircleID')";
-        $result = mysqli_query($conn, $insertQuery)
-                or die('Error making insert annotation query' . mysql_error());
+        $insertCirRightQuery = "INSERT INTO CircleAccessRight VALUES ( '$collectionID', '$grantCircleID')";
+        $result = mysqli_query($conn, $insertCirRightQuery)
+                or die('Error making insert circle access right query' . mysql_error());
     }
 }
 
-// load current access rights for circles
+// load all circles that currently have access right
 $rightCircles = array();
-$rightCircleQuery = mysqli_query($conn, "select FriendCircle.circleID, nameOfCircle from CircleAccessRight INNER JOIN FriendCircle ON CircleAccessRight.circleID = FriendCircle.circleID WHERE collectionID = ('$collectionID')");
+$circles_with_right_query = mysqli_query($conn, "select FriendCircle.circleID, nameOfCircle from CircleAccessRight INNER JOIN FriendCircle ON CircleAccessRight.circleID = FriendCircle.circleID WHERE collectionID = ('$collectionID')");
 $k = 0;
-while ($row = mysqli_fetch_array($rightCircleQuery)) {
+while ($row = mysqli_fetch_array($circles_with_right_query)) {
     $rightCircles[$k] = $row;
     $k = $k + 1;
 }
 
-// load all circles
+// load all circles that the user is in
 $circles = array();
-$circleQuery = mysqli_query($conn, "select FriendCircle.circleID, nameOfCircle from CircleMembership INNER JOIN FriendCircle ON CircleMembership.circleID = FriendCircle.circleID WHERE CircleMembership.accountID = ('$user_accountID')");
+$user_circles_query = mysqli_query($conn, "select FriendCircle.circleID, nameOfCircle from CircleMembership INNER JOIN FriendCircle ON CircleMembership.circleID = FriendCircle.circleID WHERE CircleMembership.accountID = ('$user_accountID')");
 $k = 0;
-while ($row = mysqli_fetch_array($circleQuery)) {
+while ($row = mysqli_fetch_array($user_circles_query)) {
     $circles[$k] = $row;
     $k = $k + 1;
 }
@@ -125,18 +123,18 @@ while ($row = mysqli_fetch_array($circleQuery)) {
 if (isset($_POST['removeInd'])) {
     $removeIndID = $_POST['removeInd'];
     echo $removeIndID;
-    $removeQuery = "DELETE FROM FriendAccessRight WHERE collectionID = $collectionID AND accountID = $removeIndID";
-    $result = mysqli_query($conn, $removeQuery)
-            or die('Error making delete access right query' . mysql_error());
+    $removeIndRightQuery = "DELETE FROM FriendAccessRight WHERE collectionID = $collectionID AND accountID = $removeIndID";
+    $result = mysqli_query($conn, $removeIndRightQuery)
+            or die('Error making delete user access right query' . mysql_error());
 }
 
 // add individual access right
 if (isset($_POST['grantInd'])) {
     $grantIndID = $_POST['grantInd'];
     echo $grantIndID;
-    $insertQuery = "INSERT INTO FriendAccessRight VALUES ( '$collectionID', '$grantIndID')";
-    $result = mysqli_query($conn, $insertQuery)
-            or die('Error making insert access right query' . mysql_error());
+    $insertIndRightQuery = "INSERT INTO FriendAccessRight VALUES ( '$collectionID', '$grantIndID')";
+    $result = mysqli_query($conn, $insertIndRightQuery)
+            or die('Error making insert user access right query' . mysql_error());
 }
 
 // function to get all friends of an individual
@@ -160,14 +158,13 @@ $friends = getFriends($user_accountID, $conn);
 // load current access rights for individuals
 $rightPeople = array();
 $rightIDs = array();
-$rightPeopleQuery = mysqli_query($conn, "select Account.accountID, name from FriendAccessRight INNER JOIN Account ON FriendAccessRight.accountID = Account.accountID WHERE collectionID = ('$collectionID')");
+$ind_with_rights_query = mysqli_query($conn, "select Account.accountID, name from FriendAccessRight INNER JOIN Account ON FriendAccessRight.accountID = Account.accountID WHERE collectionID = ('$collectionID')");
 $k = 0;
-while ($row = mysqli_fetch_array($rightPeopleQuery)) {
+while ($row = mysqli_fetch_array($ind_with_rights_query)) {
     $rightPeople[$k] = $row;
     $rightIDs[$k] = $row[0];
     $k = $k + 1;
 }
-echo count($rightPeople);
 
 // Show friends and their friends in drop down menu
 function displayFriendsAndFriends($friends, $conn, $user_accountID, $rightIDs) {
@@ -192,16 +189,19 @@ function displayFriendsAndFriends($friends, $conn, $user_accountID, $rightIDs) {
     }
 }
 
-// Load photos
-$query = "SELECT * FROM Collection WHERE collectionID = $collectionID";
-$result = mysqli_query($conn, $query)
+// Load collection
+$select_colletion_query = "SELECT * FROM Collection WHERE collectionID = $collectionID";
+$result = mysqli_query($conn, $select_colletion_query)
         or die('Error making select collection query' . mysql_error());
 $Collection = mysqli_fetch_array($result);
+$title = str_replace("''", "'", $Collection[2]);
+$description = str_replace("''", "'", $Collection[3]);
 
+// Load photos of collection
 $photos = array();
-$query = "SELECT accountID, image, text, timestamp, bpID FROM BlogPhoto WHERE collectionID = $collectionID ORDER BY timestamp DESC";
+$select_photos_query = "SELECT accountID, image, title, timestamp, photoID FROM Photo WHERE collectionID = $collectionID ORDER BY timestamp DESC";
 
-$result = mysqli_query($conn, $query)
+$result = mysqli_query($conn, $select_photos_query)
         or die('Error making select photos query' . mysql_error());
 
 $k = 0;
@@ -263,7 +263,7 @@ function displayToBeGranted($togrants) {
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title><?php echo $Collection[2] ?></title>
+        <title><?php echo $title ?></title>
 
         <!-- Bootstrap Core CSS -->
         <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -318,14 +318,14 @@ function displayToBeGranted($togrants) {
                         <div class="row control-group">
                             <div class="form-group col-xs-12 floating-label-form-group controls">
                                 <label>Title</label>
-                                <input type="text" class="form-control" value="<?php echo $Collection[2] ?>" name="title" required data-validation-required-message="Title">
+                                <input type="text" class="form-control" value="<?php echo htmlentities($title) ?>" name="title" required data-validation-required-message="Title">
                                 <p class="help-block text-danger"></p>
                             </div>
                         </div>
                         <div class="row control-group">
                             <div class="form-group col-xs-12 floating-label-form-group controls">
                                 <label>Description</label>
-                                <input type="text" class="form-control" value="<?php echo $Collection[3] ?>" name="description" required data-validation-required-message="Description"></textarea>
+                                <input type="text" class="form-control" value="<?php echo htmlentities($description) ?>" name="description" required data-validation-required-message="Description"></textarea>
                                 <p class="help-block text-danger"></p>
                             </div>
                         </div>

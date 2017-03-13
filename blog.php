@@ -25,18 +25,18 @@ $name = mysqli_fetch_assoc(mysqli_query($conn, $load_name))['name'];
 if (isset($_REQUEST["delete"])) {
     $delete = $_REQUEST["delete"];
 
-    $delete_query = "DELETE FROM BlogPhoto WHERE bpID = $delete";
+    $delete_blog_query = "DELETE FROM Blog WHERE blogID = $delete";
 
-    $delete_result = mysqli_query($conn, $delete_query)
+    $delete_result = mysqli_query($conn, $delete_blog_query)
             or die('Error making saveToDatabase query' . mysql_error());
 }
 
 $blogPosts = array();
 
-$query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE accountID = $accountID AND isPhoto = 0 ORDER BY timestamp DESC";
+$select_blog_query = "SELECT accountID, title, text, timestamp, blogID FROM Blog WHERE accountID = $accountID ORDER BY timestamp DESC";
 
-$result = mysqli_query($conn, $query)
-        or die('Error making saveToDatabase query' . mysql_error());
+$result = mysqli_query($conn, $select_blog_query)
+        or die('Error making select blogs query' . mysql_error());
 
 $k = 0;
 while ($row = mysqli_fetch_array($result)) {
@@ -53,14 +53,16 @@ function displayBP($blogPosts) {
     for ($x = 0; $x < count($blogPosts); $x++) {
         $BP = $blogPosts[$x];
 
+        $title = str_replace("''", "'", $BP[1]);
         $preview = str_replace("<br />", "\n", $BP[2]);
+        $preview = str_replace("''", "'", $preview);
         $preview = substr($preview, 0, 50);
 
         echo "               
                     <div class=\"post-preview\">
-                        <a href=\"blogPost.php?bpID=$BP[4]\">
+                        <a href=\"blogPost.php?blogID=$BP[4]\">
                             <h2 class=\"post-title\">
-                                $BP[1]
+                                $title
                             </h2>
                             <h3 class=\"post-subtitle\">
                                 $preview
@@ -126,7 +128,7 @@ function displayNewPostButton() {
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                         <div class="site-heading">
-                            <h1><?php echo $name?>'s Blog</h1>
+                            <h1><?php echo $name ?>'s Blog</h1>
                         </div>
                     </div>
                 </div>

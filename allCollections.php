@@ -24,33 +24,32 @@ $name = mysqli_fetch_assoc(mysqli_query($conn, $load_name))['name'];
 $collections = array();
 
 function saveToDatabase($collection, $user_accountID, $conn) {
-    $query = "INSERT INTO Collection (accountID, name, description) " .
+    $new_collection_query = "INSERT INTO Collection (accountID, name, description) " .
             "VALUES ( '$user_accountID', '${collection['name']}', '${collection['description']}')";
-    echo $query;
-    $result = mysqli_query($conn, $query)
-            or die('Error making saveToDatabase query' . mysql_error());
+    $result = mysqli_query($conn, $new_collection_query)
+            or die('Error making new collection query' . mysql_error());
 }
 
 //create new collection
 if (isset($_POST['title']) && isset($_POST['description'])) {
     $collection = array();
-    $collection['name'] = $_POST['title'];
-    $collection['description'] = $_POST['description'];
+    $collection['name'] =  str_replace("'", "\'\'", $_POST['title']);
+    $collection['description'] =  str_replace("'", "\'\'", $_POST['description']);
     saveToDatabase($collection, $user_accountID, $conn);
 }
 
 if (isset($_REQUEST["delete"])) {
     $delete = $_REQUEST["delete"];
 
-    $delete_query = "DELETE FROM Collection WHERE collectionID = $delete";
+    $delete_collection_query = "DELETE FROM Collection WHERE collectionID = $delete";
 
-    $delete_result = mysqli_query($conn, $delete_query)
+    $delete_result = mysqli_query($conn, $delete_collection_query)
             or die('Error making saveToDatabase query' . mysql_error());
 }
 
 // get all collections of the account
-$query = "SELECT * FROM Collection WHERE accountID = $accountID";
-$result = mysqli_query($conn, $query)
+$select_collection_query = "SELECT * FROM Collection WHERE accountID = $accountID";
+$result = mysqli_query($conn, $select_collection_query)
         or die('Error making select collections query' . mysql_error());
 $k = 0;
 while ($row = mysqli_fetch_array($result)) {
@@ -65,7 +64,7 @@ $grantedQuery = "SELECT collectionID FROM Collection WHERE"
         . "UNION "
         . "SELECT collectionID FROM circleaccessright INNER JOIN circlemembership ON circleaccessright.circleID = circlemembership.circleID WHERE accountID = $user_accountID)";
 $result = mysqli_query($conn, $grantedQuery)
-        or die('Error making select collections query' . mysql_error());
+        or die('Error making get granted collections query' . mysql_error());
 $k = 0;
 while ($row = mysqli_fetch_array($result)) {
     $grantedCollections[$k] = $row[0];
@@ -90,15 +89,17 @@ function displayCollections($collections, $user_accountID, $grantedCollections) 
 
     for ($x = 0; $x < count($collections); $x++) {
         $Collection = $collections[$x];
+        $title = str_replace("''", "'", $Collection[2]);
+        $description = str_replace("''", "'", $Collection[3]);
         if (hasPermission($Collection, $user_accountID, $grantedCollections)) {
             echo "               
                     <div class=\"post-preview\">
                         <a href=\"collection.php?collectionID=$Collection[0]\">
                             <h2 class=\"post-title\">
-                                $Collection[2]
+                                $title
                             </h2>
                             <h3 class=\"post-subtitle\">
-                                $Collection[3]
+                                $description
                             </h3>
                         </a>
                     </div>

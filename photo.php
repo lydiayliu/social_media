@@ -12,70 +12,60 @@ if (isset($_SESSION['login_user'])) {
 $load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
 $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['accountID'];
 
-$bp_ID = $_GET['bpID'];
+$bp_ID = $_GET['photoID'];
 
-$query = "SELECT accountID, image, text, timestamp, bpID, collectionID FROM BlogPhoto WHERE bpID = $bp_ID";
+$select_photo_query = "SELECT Photo.accountID, image, title, timestamp, photoID, collectionID, name FROM Photo INNER JOIN Account ON Photo.accountID = Account.accountID WHERE photoID = $bp_ID";
 
-$result = mysqli_query($conn, $query)
-        or die('Error making saveToDatabase query' . mysql_error());
+$result = mysqli_query($conn, $select_photo_query)
+        or die('Error making select photo query' . mysql_error());
 
 $Photo = mysqli_fetch_array($result);
 
 //Add Annotation
 if (isset($_POST['annotation'])) {
     $annotation = $_POST['annotation'];
-
-    echo $annotation;
-
     //if annotation exists, delete it
-    $searchQuery = "SELECT * FROM Annotation WHERE bpID = $bp_ID AND accountID = $user_accountID AND annotation LIKE '%$annotation%'";
-    $result = mysqli_query($conn, $searchQuery)
-            or die('Error making insert comments query' . mysql_error());
+    $search_annotation_Query = "SELECT * FROM Annotation WHERE photoID = $bp_ID AND accountID = $user_accountID AND annotation LIKE '%$annotation%'";
+    $result = mysqli_query($conn, $search_annotation_Query)
+            or die('Error making search annotation query' . mysql_error());
     $anno = mysqli_fetch_array($result);
 
     if ($anno) {
-        echo 'had annotation';
-        $annoQuery = "DELETE FROM Annotation WHERE bpID = $bp_ID AND accountID = $user_accountID AND annotation LIKE '%$annotation%'";
-        $result = mysqli_query($conn, $annoQuery)
+        $delete_annotation_Query = "DELETE FROM Annotation WHERE photoID = $bp_ID AND accountID = $user_accountID AND annotation LIKE '%$annotation%'";
+        $result = mysqli_query($conn, $delete_annotation_Query)
                 or die('Error making delete annotation query' . mysql_error());
     } else {
-        $annoQuery = "INSERT INTO Annotation (bpID, accountID, annotation) 
+        $insert_annotatin_Query = "INSERT INTO Annotation (photoID, accountID, annotation) 
                             VALUES ( '$bp_ID', '$user_accountID','$annotation')";
-        $result = mysqli_query($conn, $annoQuery)
+        $result = mysqli_query($conn, $insert_annotatin_Query)
                 or die('Error making insert annotation query' . mysql_error());
     }
 }
 
 //Add Comments
 if (isset($_POST['comment'])) {
-
-    echo "got comment";
-
     $comment = $_POST['comment'];
 
-    $commentQuery = "INSERT INTO Comment (bpID, accountID, comment) 
+    $insert_comment_Query = "INSERT INTO Comment (photoID, accountID, comment) 
                             VALUES ( '$bp_ID', '$user_accountID','$comment')";
-    $result = mysqli_query($conn, $commentQuery)
+    $result = mysqli_query($conn, $insert_comment_Query)
             or die('Error making insert comments query' . mysql_error());
 }
 
 //Delete Comments
 if (isset($_POST['delete'])) {
-
-    echo "got delete";
-
     $timeOfComment = $_POST['delete'];
     
-    $deleteQuery = "DELETE FROM Comment WHERE bpID = $bp_ID AND accountID = $user_accountID AND timestamp = '$timeOfComment'";
+    $delete_comment_Query = "DELETE FROM Comment WHERE photoID = $bp_ID AND accountID = $user_accountID AND timestamp = '$timeOfComment'";
     
-    $result = mysqli_query($conn, $deleteQuery)
-            or die('Error making delete comments query' . mysql_error());
+    $result = mysqli_query($conn, $delete_comment_Query)
+            or die('Error making delete comment query' . mysql_error());
 }
 
-// Get comments on photo
+// Get all comments on photo
 $comments = array();
-$query = "SELECT bpID, Comment.accountID, timestamp, comment, name FROM Comment INNER JOIN Account ON Comment.accountID = Account.accountID WHERE bpID = $bp_ID ORDER BY timestamp ASC";
-$result = mysqli_query($conn, $query)
+$select_comments_query = "SELECT photoID, Comment.accountID, timestamp, comment, name FROM Comment INNER JOIN Account ON Comment.accountID = Account.accountID WHERE photoID = $bp_ID ORDER BY timestamp ASC";
+$result = mysqli_query($conn, $select_comments_query)
         or die('Error making select comments query' . mysql_error());
 $k = 0;
 while ($row = mysqli_fetch_array($result)) {
@@ -83,10 +73,10 @@ while ($row = mysqli_fetch_array($result)) {
     $k = $k + 1;
 }
 
-// Get annotations photo
+// Get all annotations on photo
 $annotations = array();
-$query = "SELECT name, annotation FROM Annotation INNER JOIN Account ON Annotation.accountID = Account.accountID WHERE bpID = $bp_ID";
-$result = mysqli_query($conn, $query)
+$select_annotations_query = "SELECT name, annotation FROM Annotation INNER JOIN Account ON Annotation.accountID = Account.accountID WHERE photoID = $bp_ID";
+$result = mysqli_query($conn, $select_annotations_query)
         or die('Error making select annotations query' . mysql_error());
 $k = 0;
 while ($row = mysqli_fetch_array($result)) {
@@ -110,7 +100,7 @@ function displayComments($comments, $user_accountID) {
 
         if ($Comment[1] == $user_accountID) {
             echo "
-                    <form name=\"delete\" action=\"photo.php?bpID=$Comment[0]\" id=\"delete\" method=\"post\">
+                    <form name=\"delete\" action=\"photo.php?photoID=$Comment[0]\" id=\"delete\" method=\"post\">
                         <div class = \"chat-body clearfix\">
                         <div class = \"header\">
                         <strong class = \"primary-font\">${Comment[4]}</strong>
@@ -190,7 +180,7 @@ function displayComments($comments, $user_accountID) {
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                         <h1><?php echo $Photo[2] ?></h1>
-                        <span class="meta"><a href="#"><?php echo $Photo[0] ?></a> uploaded at <?php echo $Photo[3] ?></span>
+                        <span class="meta"><a href="#"><?php echo $Photo[6] ?></a> uploaded at <?php echo $Photo[3] ?></span>
                     </div>
                 </div>
             </div>
@@ -213,7 +203,7 @@ function displayComments($comments, $user_accountID) {
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-                        <form name="like" action='photo.php?bpID=<?php echo $bp_ID ?>' id="like" method='post'>
+                        <form name="like" action='photo.php?photoID=<?php echo $bp_ID ?>' id="like" method='post'>
                             <input name="annotation" type="hidden" id="annotation" value="like" />
                             <button type="submit" class="btn btn-default btn-xs" ><i class="glyphicon glyphicon-thumbs-up"></i> Like </button>
                             <div class="btn-group pull-right">
@@ -230,7 +220,7 @@ function displayComments($comments, $user_accountID) {
                             </div>
                         </form>
 
-                        <form name="love" action='photo.php?bpID=<?php echo $bp_ID ?>' id="love" method='post'>
+                        <form name="love" action='photo.php?photoID=<?php echo $bp_ID ?>' id="love" method='post'>
                             <button type="submit" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-heart"></i> Love </button>
                             <input name="annotation" type="hidden" id="annotation" value="love" />
                             <div class="btn-group pull-right">
@@ -247,7 +237,7 @@ function displayComments($comments, $user_accountID) {
                                 </ul>
                             </div>
                         </form>
-                        <form name="sad" action='photo.php?bpID=<?php echo $bp_ID ?>' id="sad" method='post'>
+                        <form name="sad" action='photo.php?photoID=<?php echo $bp_ID ?>' id="sad" method='post'>
                             <button type="submit" class="btn btn-default btn-xs"><i class="em em-disappointed"></i> Sad  </button>
                             <input name="annotation" type="hidden" id="annotation" value="sad" />
                             <div class="btn-group pull-right">
@@ -264,7 +254,7 @@ function displayComments($comments, $user_accountID) {
                                 </ul>
                             </div>
                         </form>
-                        <form name="angry" action='photo.php?bpID=<?php echo $bp_ID ?>' id="angry" method='post'>
+                        <form name="angry" action='photo.php?photoID=<?php echo $bp_ID ?>' id="angry" method='post'>
                             <button type="submit" class="btn btn-default btn-xs"><i class="em em-angry"></i> Angry</button>
                             <input name="annotation" type="hidden" id="annotation" value="angry" />
                             <div class="btn-group pull-right">
@@ -302,7 +292,7 @@ function displayComments($comments, $user_accountID) {
                         </div>
                         <!-- /.panel-body -->
                         <div class="panel-footer">
-                            <form name="comment" action='photo.php?bpID=<?php echo $bp_ID ?>' id="comment" method='post'>
+                            <form name="comment" action='photo.php?photoID=<?php echo $bp_ID ?>' id="comment" method='post'>
                                 <div class="input-group">
                                     <input name="comment" id="comment" type="text" class="form-control input-sm" placeholder="Type your comment here..." required data-validation-required-message="Comment" />
                                     <span class="input-group-btn">

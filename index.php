@@ -14,11 +14,11 @@
       </div>
     </div>
     <?php
-      if (isset($_SESSION['login_user'])){
-        echo '<script type="text/javascript">
-           window.location = "welcome.php"
-      </script>';
-      }
+//      if (isset($_SESSION['login_user'])){
+//        echo '<script type="text/javascript">
+//           window.location = "welcome.php"
+//      </script>';
+//      }
     ?>
     <div class="container">
       <button type="button" id="sign_up" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">

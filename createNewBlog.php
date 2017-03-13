@@ -12,8 +12,6 @@ if (isset($_SESSION['login_user'])) {
 $load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
 $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['accountID'];
 
-echo($user_accountID);
-
 function isDataValid() {
     $errorMessage = null;
     if (!isset($_POST['title']) or trim($_POST['title']) == '')
@@ -29,24 +27,26 @@ function isDataValid() {
 
 function getBlogPost() {
     $blogPost = array();
-    $blogPost['title'] = $_POST['title'];
+    $blogPost['title'] = str_replace("'", "\'\'", $_POST['title']);
     $blogPost['content'] = str_replace("\n", "<br />", $_POST['content']);
+    $blogPost['content'] = str_replace("'", "\'\'", $blogPost['content']);
     return $blogPost;
 }
 
 function printTitle($blogPost) {
-    echo $blogPost['title'];
+    echo htmlentities($blogPost['title']);
 }
 
 function printContent($blogPost) {
-    echo $blogPost['content'];
+    echo htmlentities($blogPost['content']);
 }
 
 function saveToDatabase($blogPost, $user_accountID, $conn) {
-    $query = "INSERT INTO BlogPhoto (accountID, title, text) " .
+    $new_blog_query = "INSERT INTO Blog (accountID, title, text) " .
             "VALUES ( '$user_accountID', '${blogPost['title']}', '${blogPost['content']}')";
-    $result = mysqli_query($conn, $query)
-            or die('Error making saveToDatabase query' . mysql_error());
+            echo $new_blog_query;
+    $result = mysqli_query($conn, $new_blog_query)
+            or die('Error making new blog query' . mysql_error());
 }
 
 if (isDataValid()) {

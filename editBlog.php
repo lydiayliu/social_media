@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-$bp_ID = $_GET['bpID'];
+$bp_ID = $_GET['blogID'];
 
 include("dbconfig.php");
 session_start();
@@ -14,16 +14,17 @@ if (isset($_SESSION['login_user'])) {
 $load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
 $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['accountID'];
 
-echo($user_accountID);
+$select_blog_query = "SELECT accountID, title, text, timestamp, blogID FROM Blog WHERE blogID = $bp_ID";
 
-$query = "SELECT accountID, title, text, timestamp, bpID FROM BlogPhoto WHERE bpID = $bp_ID";
-
-$result = mysqli_query($conn, $query)
+$result = mysqli_query($conn, $select_blog_query)
         or die('Error making saveToDatabase query' . mysql_error());
 
 $BP = mysqli_fetch_array($result);
 
 $content = str_replace("<br />", "\n", $BP[2]);
+$content = str_replace("''", "'", $content);
+
+$title = str_replace("''", "'", $BP[1]);
 ?>     
 <html lang="en">
 
@@ -76,18 +77,18 @@ $content = str_replace("<br />", "\n", $BP[2]);
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <form name="editBlogPost" action='blogPost.php?bpID=<?php echo $bp_ID ?>' id="editedBlogPost" method='post'>
+                    <form name="editBlogPost" action='blogPost.php?blogID=<?php echo $bp_ID ?>' id="editedBlogPost" method='post'>
                         <div class="row control-group">
                             <div class="form-group col-xs-12 floating-label-form-group controls">
                                 <label>Title</label>
-                                <input type="text" class="form-control" value="<?php echo $BP[1] ?>" name="title" required data-validation-required-message="Title">
+                                <input type="text" class="form-control" value="<?php echo htmlentities($title) ?>" name="title" required data-validation-required-message="Title">
                                 <p class="help-block text-danger"></p>
                             </div>
                         </div>
                         <div class="row control-group">
                             <div class="form-group col-xs-12 floating-label-form-group controls">
                                 <label>Content</label>
-                                <textarea rows="10" class="form-control" name="content" required data-validation-required-message="Content"><?php echo $content ?></textarea>
+                                <textarea rows="10" class="form-control" name="content" required data-validation-required-message="Content"><?php echo htmlentities($content) ?></textarea>
                                 <p class="help-block text-danger"></p>
                             </div>
                         </div>
@@ -95,7 +96,7 @@ $content = str_replace("<br />", "\n", $BP[2]);
                         <div id="success"></div>
                         <div class="row">
                             <div class="form-group col-xs-12">
-                                <a class="btn btn-default" href="blogPost.php?bpID=<?php echo $bp_ID ?>">Cancel</a>
+                                <a class="btn btn-default" href="blogPost.php?blogID=<?php echo $bp_ID ?>">Cancel</a>
                                 <button type="submit" class="btn btn-default">Post</button>
                             </div>
                         </div>
