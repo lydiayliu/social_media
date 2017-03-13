@@ -25,6 +25,7 @@
                         <span class="glyphicon glyphicon-upload"></span> &nbsp; Upload
                     </button>
                 </form>
+                <br/>
             </div>
         </div>
         <?php
@@ -206,7 +207,7 @@
                   $timestamp = $xmlObject->item($i)->getElementsByTagName('timestamp')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>timestamp: ".$timestamp;
                   echo "<br/>";
-                  $sql   = "INSERT INTO  `Blog` (`blogID`, `accountID`, `text`, `title`, `timestamp`) VALUES ('$blogID', '$accountID', `$text`, `$title`, '$timestamp')";
+                  $sql   = "INSERT INTO  `Blog` (`blogID`, `accountID`, `text`, `title`, `timestamp`) VALUES ('$blogID', '$accountID', '$text', '$title', '$timestamp')";
                   mysqli_query($conn,$sql);
                   print "Finished Item $blogID <br/>";
                   echo mysqli_error($conn)."<br/><br/>";
@@ -260,7 +261,7 @@
                   $collectionID  = $xmlObject->item($i)->getElementsByTagName('collectionID')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>collectionID: ".$collectionID;
                   echo "<br/>";
-                  $sql   = "INSERT INTO  `Photo` (`photoID`, `accountID`, `image`, `title`, `timestamp`, `collectionID`) VALUES (`$photoID`, `$accountID`, `$image`, `$title`, `$timestamp`, `$collectionID`)";
+                  $sql   = "INSERT INTO  `Photo` (`photoID`, `accountID`, `image`, `title`, `timestamp`, `collectionID`) VALUES ('$photoID', '$accountID', '$image', '$title', '$timestamp', '$collectionID')";
                   mysqli_query($conn,$sql);
                   print "Finished Item $photoID <br/>";
                   echo mysqli_error($conn)."<br/><br/>";
@@ -281,7 +282,7 @@
                   echo "<br/>";
                   $sql   = "INSERT INTO  `Annotation` (`photoID`, `accountID`, `timestamp`, `annotation`) VALUES ('$photoID', '$accountID', '$timestamp', '$annotation')";
                   mysqli_query($conn,$sql);
-                  print "Finished Item $bpID <br/>";
+                  print "Finished Item $photoID <br/>";
                   echo mysqli_error($conn)."<br/><br/>";
                 }
                 echo "Annotation import done!<br/><br/>";
@@ -300,7 +301,7 @@
                   echo "<br/>";
                   $sql   = "INSERT INTO  `Comment` (`photoID`, `accountID`, `timestamp`, `comment`) VALUES ('$photoID', '$accountID', '$timestamp', '$comment')";
                   mysqli_query($conn,$sql);
-                  print "Finished Item $bpID <br/>";
+                  print "Finished Item $photoID <br/>";
                   echo mysqli_error($conn)."<br/><br/>";
                 }
                 echo "Comment import done!<br/><br/>";
@@ -355,6 +356,13 @@
                 echo "Import done!<br/><br/>";
                 echo mysqli_error($conn);
               }
+          }
+          if (isset($errMSG)) {
+              ?>
+              <div class="alert alert-danger">
+                  <span class="glyphicon glyphicon-info-sign"></span> &nbsp; <?php echo $errMSG; ?>
+              </div>
+              <?php
           }
         ?>
     </div>
