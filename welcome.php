@@ -24,10 +24,16 @@
      <script>
        $("#profile_header").addClass("active");
      </script>
+     <div class="container">    
       <h1>Welcome <?php echo $login_session; ?></h1>
         <h2 class = "btn btn-info"> <?php echo "<a href = user_profile_update.php?user_id=". $selfID. ">Edit</a>";?></h2>
         <div>
-          <table border="0" width="500" class="demo-table">
+        <div class="row">
+                
+                 <div class="col-sm-3">
+        <img src="image5.png" style="width:70%" alt="Image">
+        </div></div>
+          <table border="0" width="300" class="demo-table">
         		<tr><td>Email Address</td>
         		<td><?php echo $self_row['email_address']; ?></td>
         		</tr>
@@ -53,7 +59,9 @@
         	</table>
         </div>
         <h2 class = "btn btn-info"><a href = "logout.php">Sign Out</a></h2>
+        <br><br>
       <?php require_once('common_footer.html');?>
+      </div>
    </body>
 
 </html>
