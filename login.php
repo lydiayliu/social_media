@@ -54,11 +54,10 @@ $conn->close();
                 <label>Password :</label><input type="password" name="password" class="box"><br/>
                 <input class="btn btn-primary" type = "submit" value = " Submit "/><br />
             </form>
-            <form action="register.php" target="_blank" action="">
-                <button class="btn btn-primary">Register</button>
+            <form action="index.php">
+                <input class="btn btn-primary" type="submit" value="Index" />
             </form>
             <div><?php if (isset($message)) echo $message; ?></div>
-
         </div>
         <?php require_once('common_footer.html'); ?>
     </body>
