@@ -184,6 +184,35 @@
                 }
                 echo "Message import done!<br/><br/>";
 
+                $xmlObject = $xmlDoc->getElementsByTagName('Blog');
+                $itemCount = $xmlObject->length;
+                for ($i=0; $i < $itemCount; $i++){
+                  $blogID = $xmlObject->item($i)->getElementsByTagName('blogID')->item(0)->childNodes->item(0)->nodeValue;
+                  echo "blogID: ".$blogID;
+                  $accountID  = $xmlObject->item($i)->getElementsByTagName('accountID')->item(0)->childNodes->item(0)->nodeValue;
+                  echo "<br/>accountID: ".$accountID;
+                  if (!is_null($xmlObject->item($i)->getElementsByTagName('text')->item(0)->childNodes->item(0))) {
+                    $text = $xmlObject->item($i)->getElementsByTagName('text')->item(0)->childNodes->item(0)->nodeValue;
+                  }else {
+                    $text = NULL;
+                  }
+                  echo "<br/>text: ".$text;
+                  if (!is_null($xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0))) {
+                    $title = $xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0)->nodeValue;
+                  }else {
+                    $title = NULL;
+                  }
+                  echo "<br/>title: ".$title;
+                  $timestamp = $xmlObject->item($i)->getElementsByTagName('timestamp')->item(0)->childNodes->item(0)->nodeValue;
+                  echo "<br/>timestamp: ".$timestamp;
+                  echo "<br/>";
+                  $sql   = "INSERT INTO  `Blog` (`blogID`, `accountID`, `text`, `title`, `timestamp`) VALUES ('$blogID', '$accountID', `$text`, `$title`, '$timestamp')";
+                  mysqli_query($conn,$sql);
+                  print "Finished Item $blogID <br/>";
+                  echo mysqli_error($conn)."<br/><br/>";
+                }
+                echo "Blog import done!<br/><br/>";
+
                 $xmlObject = $xmlDoc->getElementsByTagName('Collection');
                 $itemCount = $xmlObject->length;
                 for ($i=0; $i < $itemCount; $i++){
@@ -207,27 +236,19 @@
                 }
                 echo "Collection import done!<br/><br/>";
 
-                $xmlObject = $xmlDoc->getElementsByTagName('BlogPhoto');
+                $xmlObject = $xmlDoc->getElementsByTagName('Photo');
                 $itemCount = $xmlObject->length;
                 for ($i=0; $i < $itemCount; $i++){
-                  $bpID = $xmlObject->item($i)->getElementsByTagName('bpID')->item(0)->childNodes->item(0)->nodeValue;
-                  echo "bpID: ".$bpID;
+                  $photoID = $xmlObject->item($i)->getElementsByTagName('photoID')->item(0)->childNodes->item(0)->nodeValue;
+                  echo "photoID: ".$photoID;
                   $accountID  = $xmlObject->item($i)->getElementsByTagName('accountID')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>accountID: ".$accountID;
-                  $isPhoto	 = $xmlObject->item($i)->getElementsByTagName('isPhoto')->item(0)->childNodes->item(0)->nodeValue;
-                  echo "<br/>isPhoto: ".$isPhoto;
                   if (!is_null($xmlObject->item($i)->getElementsByTagName('image')->item(0)->childNodes->item(0))) {
                     $image = $xmlObject->item($i)->getElementsByTagName('image')->item(0)->childNodes->item(0)->nodeValue;
                   }else {
                     $image = NULL;
                   }
                   echo "<br/>image: ".$image;
-                  if (!is_null($xmlObject->item($i)->getElementsByTagName('text')->item(0)->childNodes->item(0))) {
-                    $text = $xmlObject->item($i)->getElementsByTagName('text')->item(0)->childNodes->item(0)->nodeValue;
-                  }else {
-                    $text = NULL;
-                  }
-                  echo "<br/>text: ".$text;
                   if (!is_null($xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0))) {
                     $title = $xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0)->nodeValue;
                   }else {
@@ -236,37 +257,21 @@
                   echo "<br/>title: ".$title;
                   $timestamp = $xmlObject->item($i)->getElementsByTagName('timestamp')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>timestamp: ".$timestamp;
-                  if (!is_null($xmlObject->item($i)->getElementsByTagName('collectionID')->item(0)->childNodes->item(0))) {
-                    $collectionID = $xmlObject->item($i)->getElementsByTagName('collectionID')->item(0)->childNodes->item(0)->nodeValue;
-                    $setcheck=true;
-                  }else {
-                    $collectionID = NULL;
-                    $setcheck=false;
-                  }
+                  $collectionID  = $xmlObject->item($i)->getElementsByTagName('collectionID')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>collectionID: ".$collectionID;
                   echo "<br/>";
-                  if ($setcheck) {
-                    $sql   = "INSERT INTO  `BlogPhoto` (`bpID`, `accountID`, `isPhoto`, `image`, `text`, `title`, `timestamp`, `collectionID`) VALUES ('$bpID', '$accountID', '$isPhoto', '$image', '$text', '$title', '$timestamp', '$collectionID')";
-                    mysqli_query($conn,$sql);
-                  }else {
-                    $setsql = "SET FOREIGN_KEY_CHECKS=0";
-                    mysqli_query($conn,$setsql);
-                    $sql   = "INSERT INTO  `BlogPhoto` (`bpID`, `accountID`, `isPhoto`, `image`, `text`, `title`, `timestamp`, `collectionID`) VALUES ('$bpID', '$accountID', '$isPhoto', '$image', '$text', '$title', '$timestamp', '$collectionID')";
-                    mysqli_query($conn,$sql);
-                    $setsql = "SET FOREIGN_KEY_CHECKS=1";
-                    mysqli_query($conn,$setsql);
-
-                  }
-                  print "Finished Item $bpID <br/>";
+                  $sql   = "INSERT INTO  `Photo` (`photoID`, `accountID`, `image`, `title`, `timestamp`, `collectionID`) VALUES (`$photoID`, `$accountID`, `$image`, `$title`, `$timestamp`, `$collectionID`)";
+                  mysqli_query($conn,$sql);
+                  print "Finished Item $photoID <br/>";
                   echo mysqli_error($conn)."<br/><br/>";
                 }
-                echo "BlogPhoto import done!<br/><br/>";
+                echo "Photo import done!<br/><br/>";
 
                 $xmlObject = $xmlDoc->getElementsByTagName('Annotation');
                 $itemCount = $xmlObject->length;
                 for ($i=0; $i < $itemCount; $i++){
-                  $bpID = $xmlObject->item($i)->getElementsByTagName('bpID')->item(0)->childNodes->item(0)->nodeValue;
-                  echo "bpID: ".$bpID;
+                  $photoID = $xmlObject->item($i)->getElementsByTagName('photoID')->item(0)->childNodes->item(0)->nodeValue;
+                  echo "photoID: ".$photoID;
                   $accountID  = $xmlObject->item($i)->getElementsByTagName('accountID')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>accountID: ".$accountID;
                   $timestamp = $xmlObject->item($i)->getElementsByTagName('timestamp')->item(0)->childNodes->item(0)->nodeValue;
@@ -274,7 +279,7 @@
                   $annotation  = $xmlObject->item($i)->getElementsByTagName('annotation')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>annotation: ".$annotation;
                   echo "<br/>";
-                  $sql   = "INSERT INTO  `Annotation` (`bpID`, `accountID`, `timestamp`, `annotation`) VALUES ('$bpID', '$accountID', '$timestamp', '$annotation')";
+                  $sql   = "INSERT INTO  `Annotation` (`photoID`, `accountID`, `timestamp`, `annotation`) VALUES ('$photoID', '$accountID', '$timestamp', '$annotation')";
                   mysqli_query($conn,$sql);
                   print "Finished Item $bpID <br/>";
                   echo mysqli_error($conn)."<br/><br/>";
@@ -284,8 +289,8 @@
                 $xmlObject = $xmlDoc->getElementsByTagName('Comment');
                 $itemCount = $xmlObject->length;
                 for ($i=0; $i < $itemCount; $i++){
-                  $bpID = $xmlObject->item($i)->getElementsByTagName('bpID')->item(0)->childNodes->item(0)->nodeValue;
-                  echo "bpID: ".$bpID;
+                  $photoID = $xmlObject->item($i)->getElementsByTagName('photoID')->item(0)->childNodes->item(0)->nodeValue;
+                  echo "photoID: ".$photoID;
                   $accountID  = $xmlObject->item($i)->getElementsByTagName('accountID')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>accountID: ".$accountID;
                   $timestamp = $xmlObject->item($i)->getElementsByTagName('timestamp')->item(0)->childNodes->item(0)->nodeValue;
@@ -293,7 +298,7 @@
                   $comment  = $xmlObject->item($i)->getElementsByTagName('comment')->item(0)->childNodes->item(0)->nodeValue;
                   echo "<br/>annotation: ".$annotation;
                   echo "<br/>";
-                  $sql   = "INSERT INTO  `Comment` (`bpID`, `accountID`, `timestamp`, `comment`) VALUES ('$bpID', '$accountID', '$timestamp', '$comment')";
+                  $sql   = "INSERT INTO  `Comment` (`photoID`, `accountID`, `timestamp`, `comment`) VALUES ('$photoID', '$accountID', '$timestamp', '$comment')";
                   mysqli_query($conn,$sql);
                   print "Finished Item $bpID <br/>";
                   echo mysqli_error($conn)."<br/><br/>";

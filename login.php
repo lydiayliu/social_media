@@ -47,16 +47,25 @@ $conn->close();
             </div>
         </div>
         <div class="container">
-            <div ><b>Login</b></div>
+          <div class="col-md-4">
             <form action = "" method = "post">
-                <label>Email :</label><input type="text" name="email" class="box"><br/>
-                <label>Password :</label><input type="password" name="password" class="box"><br/>
-                <input class="btn btn-primary" type = "submit" value = " Submit "/><br />
+              <h1 class= "form-signin-heading">Login</h1>
+              <label>Email :</label><input type="text" name="email" class="form-control"><br/>
+              <label>Password :</label><input type="password" name="password" class="form-control"><br/>
+              <div class="btn-group btn-group-justified" role="group">
+              <div class="btn-group" role="group">
+              <input class="btn btn-primary" type = "submit" value = "Submit"/>
+              </div>
+              <div class="btn-group" role="group">
+              <a href="register.php" class="btn btn-primary" role="button">Register</a>
+              </div>
+              </div>
+              <br/>
+              <a href="index.php" class="btn btn-primary" role="button">Back to Homepage</a>
             </form>
-            <form action="index.php">
-                <input class="btn btn-primary" type="submit" value="Home Page" />
-            </form>
+
             <div><?php if (isset($message)) echo $message; ?></div>
+          </div>
         </div>
         <?php require_once('common_footer.html'); ?>
     </body>
