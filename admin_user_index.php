@@ -16,6 +16,12 @@
    <head>
       <title>User Index </title>
       <?php require_once('head.php');?>
+      <style type="text/css">
+        td
+        {
+            padding:0 15px 0 15px;
+        }
+      </style>
     </head>
 
    <body>
@@ -41,8 +47,8 @@
                         echo 'Admin</td>';
                       else
                         echo 'User</td>';
-              echo '<td> <a href="photo.php?accountID=' . $user_row['accountID'] . '">Blogs</a></td>';
               echo '<td> <a href="blog.php?accountID=' . $user_row['accountID'] . '">Blogs</a></td>';
+              echo '<td> <a href="allCollections.php?accountID=' . $user_row['accountID'] . '">Collections</a></td>';
               echo '</tr>';
       }
       echo '</table>'; ?>
