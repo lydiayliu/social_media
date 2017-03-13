@@ -9,8 +9,9 @@ if (isset($_SESSION['login_user'])) {
     $user_email = "error";
 }
 
-$load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
+$load_accountID = "SELECT accountID, isAdmin FROM Account WHERE email_address = '$user_email'";
 $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['accountID'];
+$isAdmin = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['isAdmin'];
 
 if (!isset($_GET['accountID'])) {
     $accountID = $user_accountID;
@@ -71,7 +72,10 @@ while ($row = mysqli_fetch_array($result)) {
     $k = $k + 1;
 }
 
-function hasPermission($Collection, $user_accountID, $grantedCollections) {
+function hasPermission($Collection, $user_accountID, $grantedCollections, $isAdmin) {
+    if ($isAdmin == 1){
+        return true;
+    }
     if ($Collection[1] == $user_accountID) {
         return true;
     }
@@ -81,7 +85,7 @@ function hasPermission($Collection, $user_accountID, $grantedCollections) {
     return false;
 }
 
-function displayCollections($collections, $user_accountID, $grantedCollections) {
+function displayCollections($collections, $user_accountID, $grantedCollections, $isAdmin) {
 
     echo "  <div class=\"container\">
                     <div class=\"row\">
@@ -91,7 +95,7 @@ function displayCollections($collections, $user_accountID, $grantedCollections) 
         $Collection = $collections[$x];
         $title = str_replace("''", "'", $Collection[2]);
         $description = str_replace("''", "'", $Collection[3]);
-        if (hasPermission($Collection, $user_accountID, $grantedCollections)) {
+        if (hasPermission($Collection, $user_accountID, $grantedCollections, $isAdmin)) {
             echo "               
                     <div class=\"post-preview\">
                         <a href=\"collection.php?collectionID=$Collection[0]\">
@@ -172,7 +176,7 @@ function displayNewCollectionButton() {
             </div>
         </header>
 
-        <?php displayCollections($collections, $user_accountID, $grantedCollections) ?>
+        <?php displayCollections($collections, $user_accountID, $grantedCollections, $isAdmin) ?>
 
         <?php
         if ($accountID == $user_accountID) {
