@@ -13,10 +13,11 @@ if (isset($_SESSION['login_user'])) {
 $load_accountID = "SELECT accountID FROM Account WHERE email_address = '$user_email'";
 $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['accountID'];
 
-echo($user_accountID);
-
 $accountID = $_GET['accountID'];
 $search = $_POST['search'];
+
+$load_name = "SELECT name FROM Account WHERE accountID = '$accountID'";
+$name = mysqli_fetch_assoc(mysqli_query($conn, $load_name))['name'];
 
 $search_blogs_query = "SELECT * FROM (SELECT accountID, title, text, timestamp, blogID FROM Blog WHERE accountID = $accountID ORDER BY timestamp DESC) AS sub WHERE title LIKE '%{$search}%' OR text LIKE '%{$search}%'";
 
@@ -29,7 +30,7 @@ while ($row = mysqli_fetch_array($result)) {
     $k = $k + 1;
 }
 
-function displayBP($blogPosts) {
+function displayBP($blogPosts, $name) {
 
     echo "  <div class=\"container\">
                     <div class=\"row\">
@@ -38,20 +39,22 @@ function displayBP($blogPosts) {
     for ($x = 0; $x < count($blogPosts); $x++) {
         $BP = $blogPosts[$x];
 
+        $title = str_replace("''", "'", $BP[1]);
         $preview = str_replace("<br />", "\n", $BP[2]);
+        $preview = str_replace("''", "'", $preview);
         $preview = substr($preview, 0, 50);
 
         echo "               
                     <div class=\"post-preview\">
                         <a href=\"blogPost.php?blogID=$BP[4]\">
                             <h2 class=\"post-title\">
-                                $BP[1]
+                                $title
                             </h2>
                             <h3 class=\"post-subtitle\">
                                 $preview
                             </h3>
                         </a>
-                        <p class=\"post-meta\">Posted by <a href=\"#\">$BP[0]</a> on $BP[3]</p>
+                        <p class=\"post-meta\">Posted by <a href=\"#\">$name</a> on $BP[3]</p>
                     </div>
                     <hr>
                     ";
@@ -64,7 +67,6 @@ function displayBP($blogPosts) {
 ?>
 
 <html lang="en">
-
     <head>
 
         <meta charset="utf-8">
@@ -85,45 +87,11 @@ function displayBP($blogPosts) {
         <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-
+        <?php require_once('head.php'); ?>
     </head>
 
     <body>
-
-        <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-            <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header page-scroll">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                        <span class="sr-only">Toggle navigation</span>
-                        Menu <i class="fa fa-bars"></i>
-                    </button>
-                    <a class="navbar-brand" href="index.html">Start Bootstrap</a>
-                </div>
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="index.html">Home</a>
-                        </li>
-                        <li>
-                            <a href="about.html">About</a>
-                        </li>
-                        <li>
-                            <a href="post.html">Sample Post</a>
-                        </li>
-                        <li>
-                            <a href="contact.html">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- /.navbar-collapse -->
-            </div>
-            <!-- /.container -->
-        </nav>
-
+        <?php require_once('common_navbar.html'); ?>
         <!-- Page Header -->
         <!-- Set your background image for this header on the line below. -->
         <header class="intro-header" style="background-image: url('img/home-bg.jpg')">
@@ -131,7 +99,7 @@ function displayBP($blogPosts) {
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                         <div class="site-heading">
-                            <h1>Search</h1>
+                            <h1>Search <?php echo $name ?>'s Blog</h1>
                         </div>
                     </div>
                 </div>
@@ -141,7 +109,7 @@ function displayBP($blogPosts) {
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <form name="search" action='searchBlog.php?accountID=<?php echo $accountID?>' id="search" method='post'>
+                    <form name="search" action='searchBlog.php?accountID=<?php echo $accountID ?>' id="search" method='post'>
                         <div class="row control-group">
                             <div class="form-group floating-label-form-group controls">
                                 <label>Search</label>
@@ -161,10 +129,8 @@ function displayBP($blogPosts) {
         </div> 
 
         <?php
-        if (empty($blogPosts)) {
-            
-        } else {
-            displayBP($blogPosts);
+        if (!empty($blogPosts)) {
+            displayBP($blogPosts, $name);
         }
         ?>
 
@@ -175,49 +141,14 @@ function displayBP($blogPosts) {
                     <!-- Pager -->
                     <ul class="pager">
                         <li class="next">
-                            <a href="blog.php?accountID=<?php echo $accountID?>">Back To Blog</a>
+                            <a href="blog.php?accountID=<?php echo $accountID ?>">Back To Blog</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                        <ul class="list-inline text-center">
-                            <li>
-                                <a href="#">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                        <p class="copyright text-muted">Copyright &copy; Social Media DB10 2017</p>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        <?php require_once('common_footer.html'); ?>
 
         <!-- jQuery -->
         <script src="vendor/jquery/jquery.min.js"></script>

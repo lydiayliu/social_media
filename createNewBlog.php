@@ -34,17 +34,16 @@ function getBlogPost() {
 }
 
 function printTitle($blogPost) {
-    echo htmlentities($blogPost['title']);
+    echo str_replace("\'\'", "'",$blogPost['title']);
 }
 
 function printContent($blogPost) {
-    echo htmlentities($blogPost['content']);
+    echo str_replace("\'\'", "'",$blogPost['content']);
 }
 
 function saveToDatabase($blogPost, $user_accountID, $conn) {
     $new_blog_query = "INSERT INTO Blog (accountID, title, text) " .
             "VALUES ( '$user_accountID', '${blogPost['title']}', '${blogPost['content']}')";
-            echo $new_blog_query;
     $result = mysqli_query($conn, $new_blog_query)
             or die('Error making new blog query' . mysql_error());
 }

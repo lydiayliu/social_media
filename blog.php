@@ -44,7 +44,7 @@ while ($row = mysqli_fetch_array($result)) {
     $k = $k + 1;
 }
 
-function displayBP($blogPosts) {
+function displayBP($blogPosts, $name) {
 
     echo "  <div class=\"container\">
                     <div class=\"row\">
@@ -68,7 +68,7 @@ function displayBP($blogPosts) {
                                 $preview
                             </h3>
                         </a>
-                        <p class=\"post-meta\">Posted by <a href=\"#\">$BP[0]</a> on $BP[3]</p>
+                        <p class=\"post-meta\">Posted by <a href=\"#\">$name</a> on $BP[3]</p>
                     </div>
                     <hr>
                     ";
@@ -157,7 +157,7 @@ function displayNewPostButton() {
             </div>
         </div> 
 
-        <?php displayBP($blogPosts) ?>
+        <?php displayBP($blogPosts, $name) ?>
 
         <?php
         if ($accountID == $user_accountID) {
