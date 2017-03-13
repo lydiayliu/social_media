@@ -47,10 +47,13 @@
     <label>Email :</label><input type="text" name="email" class="form-control"><br/>
     <label>Password :</label><input type="password" name="password" class="form-control"><br/>
     <?php if(isset($message)) echo $message; ?>
-    <input class = "btn btn-lg btn-primary btn-block" type = "submit" value = "Submit"/><br />
+    <input class = "btn btn-lg btn-primary btn-block" type = "submit" value = "Submit"/>
   </form>
   <form action="register.php" target="_blank" action="">
-    <button class="btn btn-default">Register</button>
+    <button class="btn btn-primary">Register</button>
+  </form>
+  <form action="index.php">
+    <button class="btn btn-primary">Back to homepage</button>
   </form>
   </div>
   </div>
