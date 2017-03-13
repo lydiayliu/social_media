@@ -24,12 +24,11 @@
      <script>
        $("#profile_header").addClass("active");
      </script>
-     <div class="container">    
+     <div class="container">
       <h1>Welcome <?php echo $login_session; ?></h1>
-        <h2 class = "btn btn-info"> <?php echo "<a href = user_profile_update.php?user_id=". $selfID. ">Edit</a>";?></h2>
+        <?php echo "<a href = user_profile_update.php?user_id=". $selfID. " class = \"btn btn-info\" role=\"button\" >Edit</a>";?>
         <div>
         <div class="row">
-                
                  <div class="col-sm-3">
         <img src="image5.png" style="width:70%" alt="Image">
         </div></div>
@@ -58,10 +57,11 @@
             </tr>
         	</table>
         </div>
-        <h2 class = "btn btn-info"><a href = "logout.php">Sign Out</a></h2>
+        <br/>
+        <a href = "logout.php" role="button" class = "btn btn-info">Sign Out</a>
         <br><br>
-      <?php require_once('common_footer.html');?>
       </div>
+      <?php require_once('common_footer.html');?>
    </body>
 
 </html>
