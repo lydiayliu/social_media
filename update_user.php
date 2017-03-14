@@ -13,6 +13,11 @@ function update_account($dbconn, $account_id){
     $privacy_setting = mysqli_real_escape_string($dbconn, $_POST["privacy"]);
     $introduction = mysqli_escape_string($dbconn, $_POST["introduction"]);
 
+    $old_email_query = mysqli_query($dbconn, "SELECT accountID FROM account WHERE accountID= '$account_id'");
+    $query_row = mysqli_fetch_array($old_email_query);
+    $old_email = $query_row['email_address'];
+    $is_changed = strcmp( $emailaddress , $old_email);
+
     if (empty($userpassword)){
       $sql = "UPDATE account
               SET age =           '$age',
@@ -40,6 +45,8 @@ function update_account($dbconn, $account_id){
     }
     if ($dbconn->query($sql) === TRUE)
       echo "<script type='text/javascript'>alert('Successful - Record Updated!');</script>";
+      if(is_changed)
+        header("location:logout.php");
     else
       echo "<script type='text/javascript'>alert('Unsuccessful - ERROR!');</script>";
 
