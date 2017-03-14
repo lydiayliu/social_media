@@ -10,6 +10,10 @@ $selecteddb = mysqli_select_db($conn, $dbname);
     </head>
     <body>
         <div class="container">
+            <div class="jumbotron">
+              <h1>Assignment Book</h1>
+              <p>Import XML</p>
+            </div>
             <div class="row">
                 <div class="col-md-10">
                     <form method="post" enctype="multipart/form-data" class="form-horizontal">
@@ -22,7 +26,10 @@ $selecteddb = mysqli_select_db($conn, $dbname);
                         </button>
                     </form>
                     <br/>
+                    <a href = "index.php" class = "btn btn-default" role="button" >Back to homepage</a>
+                    <br/>
                 </div>
+
             </div>
             <?php
             //upload XML
@@ -361,6 +368,8 @@ $selecteddb = mysqli_select_db($conn, $dbname);
                 <?php
             }
             ?>
+            <br/>
         </div>
+        <?php require_once('common_footer.html');?>
     </body>
 </html>

@@ -41,6 +41,15 @@ include("dbconfig.php");
     <?php require_once('head.php'); ?>
   </head>
   <body>
-    <a href="export.xml" class="btn btn-default" role="button" download>Download the xml</a>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Assignment Book</h1>
+        <p>Export XML</p>
+      </div>
+    <a href="export.xml" class = "btn btn-default" role="button" download>Download the xml</a>
+    <a href ="index.php" class = "btn btn-default" role="button" >Back to homepage</a>
+    <br><br/>
+    </div>
+    <?php require_once('common_footer.html');?>
   </body>
 </html>
