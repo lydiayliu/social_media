@@ -47,7 +47,7 @@ $selecteddb = mysqli_select_db($conn, $dbname);
                 // if no error occured, continue ....
                 if (!isset($errMSG)) {
                     $xmlDoc = new DOMDocument();
-                    $xmlDoc->load("xml/export.xml");
+                    $xmlDoc->load("export.xml");
                     $xmlObject = $xmlDoc->getElementsByTagName('Account');
                     $itemCount = $xmlObject->length;
                     for ($i = 0; $i < $itemCount; $i++) {
