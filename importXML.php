@@ -30,7 +30,7 @@ $selecteddb = mysqli_select_db($conn, $dbname);
                 $XMLFile = $_FILES['new_XML']['name'];
                 $tmp_dir = $_FILES['new_XML']['tmp_name'];
                 $XMLSize = $_FILES['new_XML']['size'];
-                $upload_dir = 'xml/'; // upload directory
+                $upload_dir = ''; // upload directory
                 $userXML = "export.xml";
                 if ($XMLFile) {
                     $XMLExt = strtolower(pathinfo($XMLFile, PATHINFO_EXTENSION)); // get image extension
