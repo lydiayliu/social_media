@@ -43,14 +43,15 @@ function update_account($dbconn, $account_id){
 
               WHERE accountID = '$account_id'";
     }
-    if ($dbconn->query($sql) === TRUE)
+    if ($dbconn->query($sql) === TRUE){
       echo "<script type='text/javascript'>alert('Successful - Record Updated!');</script>";
-      if(is_changed)
+      if(is_changed){
         header("location:logout.php");
-    else
+      }
+    }
+    else{
       echo "<script type='text/javascript'>alert('Unsuccessful - ERROR!');</script>";
-
-
+    }
 
 }
   /* Form Required Field Validation */
@@ -78,13 +79,17 @@ if (count($_POST) > 0) {
       $message = "Invalid UserEmail";
     }
   }
-
-
-  if (!isset($message)){
-
-    update_account($conn, $user_id);
-    header("Refresh:0");
-
-  }
+  if (!isset($message)) {
+        $new_account_email = mysqli_real_escape_string($conn, $_POST["email_address"]);
+        $exist_user_query = "SELECT email_address FROM account WHERE email_address = '$new_account_email'";
+        $result = $conn->query($exist_user_query);
+        if ($result->num_rows > 0) {
+            $message = "<div class=\"alert alert-danger\">Email already exist!</div>";
+        }
+        else {
+          update_account($conn, $user_id);
+          header("Refresh:0");
+        }
+    }
 }
 ?>
