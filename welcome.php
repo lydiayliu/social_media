@@ -32,7 +32,7 @@
                  <div class="col-sm-3">
         <img src="image5.png" style="width:70%" alt="Image">
         </div></div>
-          <table border="0" width="300" class="demo-table">
+          <table class="table table-striped">
         		<tr><td>Email Address</td>
         		<td><?php echo $self_row['email_address']; ?></td>
         		</tr>

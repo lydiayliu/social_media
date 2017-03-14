@@ -18,15 +18,21 @@
    <body>
 
      <?php require_once('common_navbar.html');?>
+     <div class="container">
      <script>
        $("#profile_header").addClass("active");
      </script>
       <h1>Welcome <?php echo $login_session; ?></h1>
-      <h2><a href="admin_user_index.php">View all users</a></h2>
-      <h2><a href="admin_annotation_index.php">View all annotations/comments</a></h2>
-        <h2 class = "btn btn-info"> <?php echo "<a href = user_profile_update.php?user_id=". $selfID. ">Edit</a>";?></h2>
-        <div>
-          <table border="0" width="500" class="demo-table">
+
+      <a href="admin_user_index.php" class="btn btn-primary">View all users</a>
+      <a href="admin_annotation_index.php" class="btn btn-primary">View all annotations/comments</a>
+      <br/><br/>
+      <div class="row">
+        <?php echo "<a class = \"btn btn-info\" role =\"button\" href = user_profile_update.php?user_id=". $selfID. ">Edit</a>";?>
+        <br/>
+      </div>
+        <div class="row">
+          <table class="table table-striped">
             <tr><td>Email Address</td>
             <td><?php echo $self_row['email_address']; ?></td>
             </tr>
@@ -51,9 +57,11 @@
             </tr>
           </table>
         </div>
-        <h2 class = "btn btn-info"><a href = "logout.php">Sign Out</a></h2>
+        <br/>
+        <a href = "logout.php" class = "btn btn-info" role = "button">Sign Out</a>
+        <br><br>
+      </div>
       <?php require_once('common_footer.html');?>
-
    </body>
 
 </html>
