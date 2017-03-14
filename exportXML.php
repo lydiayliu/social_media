@@ -32,7 +32,7 @@ include("dbconfig.php");
   }
   $xml .= "</tables>";
   $xml .="</note>";
-  file_put_contents("xml/export.xml", $xml);
+  file_put_contents("export.xml", $xml);
   mysqli_close($conn);
 ?>
 <html>
@@ -41,6 +41,6 @@ include("dbconfig.php");
     <?php require_once('head.php'); ?>
   </head>
   <body>
-    <a href="xml/export.xml" class="btn btn-default" role="button" download>Download the xml</a>
+    <a href="export.xml" class="btn btn-default" role="button" download>Download the xml</a>
   </body>
 </html>
