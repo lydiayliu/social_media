@@ -129,20 +129,20 @@
       $user_country = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['country'];
       $age_diff = $user_age-$age;
       if ($age_diff<=3||$age_diff<=-3){
-        $points += 50;
+        $points += 40;
       } else if ($age_diff<=6||$age_diff>=-6){
-        $points += 30;
-      } else if ($age_diff<=10||$age_diff>=-10){
         $points += 20;
+      } else if ($age_diff<=10||$age_diff>=-10){
+        $points += 10;
       }
       if ($user_city==$city){
-        $points += 30;
+        $points += 40;
       }
       if ($user_country==$country){
         $points += 20;
       }
       $query_insert_reco = "INSERT INTO Recommendation (accountID, recommendeeID, reason) VALUES ($login_user_ID,$user_accountID,$points)";
-      if ($points>=50){
+      if ($points>=60){
         mysqli_query($conn,$query_insert_reco);
       }
     }
