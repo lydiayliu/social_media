@@ -1,8 +1,6 @@
 <?php
 include("dbconfig.php");
 include("friending_functions.php");
-ini_set('display_errors', 1);
-#require_once('common_navbar.html');
 session_start();
 if (isset($_SESSION['login_user'])) {
     $user_email = $_SESSION['login_user'];

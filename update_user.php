@@ -101,7 +101,8 @@ if (count($_POST) > 0) {
             }
         } else {
             update_account($conn, $user_id, $user_accountID);
-
+            delete_recommendations($user_accountID,$conn);
+            save_recommendations($user_email,$conn);
             header("Refresh:0");
         }
     }

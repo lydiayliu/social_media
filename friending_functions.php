@@ -99,9 +99,14 @@
     }
 
     function get_recommendations($user_accountID,$conn){
-      $query_get_reco = "SELECT * FROM Account WHERE accountID IN ( SELECT accountID FROM (SELECT accountID,reason FROM Recommendation WHERE recommendeeID = $user_accountID UNION SELECT recommendeeID,reason FROM Recommendation WHERE accountID = $user_accountID ORDER BY reason) as temp)";
+      $query_get_reco = "SELECT * FROM Account WHERE accountID IN ( SELECT accountID FROM (SELECT accountID,reason FROM Recommendation WHERE recommendeeID = $user_accountID UNION SELECT recommendeeID,reason FROM Recommendation WHERE accountID = $user_accountID ORDER BY reason) as temp) LIMIT 5";
       $result = mysqli_query($conn,$query_get_reco);
       return $result;
+    }
+
+    function delete_recommendations($user_accountID,$conn){
+      $query_delete_reco = "DELETE FROM Recommendation WHERE accountID = $user_accountID OR recommendeeID = $user_accountID";
+      mysqli_query($conn,$query_delete_reco);
     }
 
     function save_recommendations($user_email,$conn){
