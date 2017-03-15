@@ -98,37 +98,49 @@
       return $result;
     }
 
-    function recommend_friend($user_accountID,$conn){
-      $city_friends = search_for_similar_city($user_accountID,$conn);
-      if ($city_friends->num_rows < 3){//only one friend or no friend found
-        $result = search_for_similar_country($user_accountID,$conn);
-      } else {
-        $result = $city_friends;
-      }
-      $result = search_for_similar_country($user_accountID,$conn);
+    function get_recommendations($user_accountID,$conn){
+      $query_get_reco = "SELECT * FROM Account WHERE accountID IN ( SELECT accountID FROM (SELECT accountID,reason FROM Recommendation WHERE recommendeeID = $user_accountID UNION SELECT recommendeeID,reason FROM Recommendation WHERE accountID = $user_accountID ORDER BY reason) as temp)";
+      $result = mysqli_query($conn,$query_get_reco);
       return $result;
     }
 
-    function search_for_similar_city($user_accountID,$conn){
+    function save_recommendations($user_email,$conn){
+      $user_accountID = mysqli_fetch_assoc(search_by_email($user_email,$conn))['accountID'];
+      $user_age = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['age'];
       $user_city = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['city'];
-      $user_age = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['age'];
-      $query_get_city_friends = "SELECT * FROM Account WHERE (age-$user_age<5 OR age-$user_age<-5) AND city LIKE '%$user_city%' LIMIT 5";
-      $result = mysqli_query($conn,$query_get_city_friends);
-      return $result;
-    }
-
-    function search_for_similar_country($user_accountID,$conn){
       $user_country = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['country'];
-      $user_age = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['age'];
-      $query_get_country_friends = "SELECT * FROM Account WHERE (age-$user_age<5 OR age-$user_age<-5) AND country LIKE '%$user_country%' LIMIT 5";
-      $result = mysqli_query($conn,$query_get_country_friends);
-      return $result;
+      $query_get_all_user_ID = "SELECT accountID from Account WHERE accountID !='$user_accountID'";
+      $load_all_userID = mysqli_query($conn,$query_get_all_user_ID);
+      while ($row = mysqli_fetch_assoc($load_all_userID)){
+        $temp = $row['accountID'];
+        calculate_reco_points($user_accountID,$temp,$user_age,$user_city,$user_country,$conn);
+      }
     }
 
-    function mutual_friends_reco($user_accountID,$conn){
-      $query_mutual_friends_reco = "SELECT * FROM Account WHERE accountID in (SELECT ID FROM (SELECT * FROM (SELECT friend2ID AS ID, COUNT(friend2ID) as count1 FROM Friendship WHERE friend1ID IN (SELECT friend2ID FROM Friendship WHERE friend1ID = '$user_accountID' UNION SELECT friend1ID FROM Friendship WHERE friend2ID = '$user_accountID') GROUP BY friend2ID) AS temp1 UNION ALL (SELECT friend1ID AS ID, COUNT(friend1ID) AS count2 FROM Friendship WHERE friend2ID IN (SELECT friend2ID FROM Friendship WHERE friend1ID = '$user_accountID' UNION SELECT friend1ID FROM Friendship WHERE friend2ID = '$user_accountID') GROUP BY friend1ID)) as temp GROUP BY ID ORDER BY count1 DESC) AND accountID != '$user_accountID' LIMIT 5";
-      $result = mysqli_query($conn,$query_mutual_friends_reco);
-      return $result;
+    function calculate_reco_points($login_user_ID,$user_accountID,$age,$city,$country,$conn){
+      $points = 0;
+      $user_age = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['age'];
+      $user_city = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['city'];
+      $user_country = mysqli_fetch_assoc(search_by_ID($user_accountID,$conn))['country'];
+      $age_diff = $user_age-$age;
+      if ($age_diff<=3||$age_diff<=-3){
+        $points += 50;
+      } else if ($age_diff<=6||$age_diff>=-6){
+        $points += 30;
+      } else if ($age_diff<=10||$age_diff>=-10){
+        $points += 20;
+      }
+      if ($user_city==$city){
+        $points += 30;
+      }
+      if ($user_country==$country){
+        $points += 20;
+      }
+      $query_insert_reco = "INSERT INTO Recommendation (accountID, recommendeeID, reason) VALUES ($login_user_ID,$user_accountID,$points)";
+      if ($points>=50){
+        mysqli_query($conn,$query_insert_reco);
+      }
     }
+
 
 ?>

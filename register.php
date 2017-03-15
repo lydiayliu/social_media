@@ -4,7 +4,9 @@ include("dbconfig.php");
 <html>
     <head>
         <title>Register Page</title>
-        <?php require_once('head.php'); ?>
+        <?php require_once('head.php');
+        require_once('friending_functions.php');
+        ini_set('display_errors', 1); ?>
     </head>
     <body>
         <div class="container">
@@ -29,6 +31,7 @@ include("dbconfig.php");
                 } else {
                     echo "Error: " . "<br>" . $dbconn->error;
                 }
+                save_recommendations($emailaddress,$dbconn);
             }
 
             /* Form Required Field Validation */
