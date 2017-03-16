@@ -12,23 +12,23 @@ $user_accountID = mysqli_fetch_assoc(search_by_email($user_email,$conn))['accoun
 $friend_list = load_friend_list($user_accountID, $conn);
 
 if (isset($_POST["name"])&&(!empty($_POST["name"]))){
-      $friend_name = mysqli_real_escape_string($conn, $_POST["name"]);
-      $search_friend_list = search_by_name($friend_name, $conn);
+  $friend_name = mysqli_real_escape_string($conn, $_POST["name"]);
+  $search_friend_list = search_by_name($friend_name, $conn);
 } else if (isset($_POST["age"])&&(!empty($_POST["age"]))){
-      $friend_age = mysqli_real_escape_string($conn, $_POST["age"]);
-      $search_friend_list = search_by_age($friend_age, $conn);
+  $friend_age = mysqli_real_escape_string($conn, $_POST["age"]);
+  $search_friend_list = search_by_age($friend_age, $conn);
 } else if (isset($_POST["city"])&&(!empty($_POST["city"]))){
-      $friend_city = mysqli_real_escape_string($conn, $_POST["city"]);
-      $search_friend_list = search_by_city($friend_city, $conn);
+  $friend_city = mysqli_real_escape_string($conn, $_POST["city"]);
+  $search_friend_list = search_by_city($friend_city, $conn);
 } else if (isset($_POST["country"])&&(!empty($_POST["country"]))){
-      $friend_country = mysqli_real_escape_string($conn, $_POST["country"]);
-      $search_friend_list = search_by_country($friend_country, $conn);
+  $friend_country = mysqli_real_escape_string($conn, $_POST["country"]);
+  $search_friend_list = search_by_country($friend_country, $conn);
 } else if (isset($_POST["email"])&&(!empty($_POST["email"]))){
-      $friend_email = mysqli_real_escape_string($conn, $_POST["email"]);
-      $search_friend_list = search_by_email($friend_email, $conn);
+  $friend_email = mysqli_real_escape_string($conn, $_POST["email"]);
+  $search_friend_list = search_by_email($friend_email, $conn);
 } else if (isset($_POST["friend_of_f"])&&(!empty($_POST["friend_of_f"]))){
-      $friend_friend = mysqli_real_escape_string($conn, $_POST["friend_of_f"]);
-      $search_friend_list = search_by_friend($friend_friend, $conn);
+  $friend_friend = mysqli_real_escape_string($conn, $_POST["friend_of_f"]);
+  $search_friend_list = search_by_friend($friend_friend, $conn);
 } else {
   echo "<script>location.href='FriendList.php'</script>";
 }
@@ -68,33 +68,33 @@ if (isset($_POST["name"])&&(!empty($_POST["name"]))){
 </head>
 <body>
 
-<!--the common nav bar-->
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand"><span class="glyphicon glyphicon-apple"></span></a>
+  <!--the common nav bar-->
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand"><span class="glyphicon glyphicon-apple"></span></a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li id="profile_header"><a href="welcome.php">Profile</a></li>
+          <li id="friendList_header"><a href="FriendList.php">Friend list</a></li>
+          <li id="friendInvitation_header"><a href="friend_invitation.php">Friend invitation</a></li>
+          <li id="selectedFriends_header"><a href="select_friends.php">Create friend circle</a></li>
+          <li id="chatRoom_header"><a href="chat_room.php">Chat room</a></li>
+          <li id="chatRoom_header"><a href="blog.php">Blog</a></li>
+          <li id="chatRoom_header"><a href="allCollections.php">Photo Collections</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li id="profile_header"><a href="welcome.php">Profile</a></li>
-        <li id="friendList_header"><a href="FriendList.php">Friend list</a></li>
-        <li id="friendInvitation_header"><a href="friend_invitation.php">Friend invitation</a></li>
-        <li id="selectedFriends_header"><a href="select_friends.php">Create friend circle</a></li>
-        <li id="chatRoom_header"><a href="chat_room.php">Chat room</a></li>
-        <li id="chatRoom_header"><a href="blog.php">Blog</a></li>
-        <li id="chatRoom_header"><a href="allCollections.php">Photo Collections</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+  </nav>
 
   <div class="container">    
     <h3>    Friends found:</h3>
@@ -119,190 +119,201 @@ if (isset($_POST["name"])&&(!empty($_POST["name"]))){
             } ?>
             <img src="image5.png" class="img-responsive" style="width:80%" alt="Image">
             <p>
-            <?php if (!$isFriend){     
-              $isInvited = false;
-              $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
-              while ($i_row = mysqli_fetch_assoc($sent_friend_invitation)){
-                if ($friend_accountID==$i_row['accountID']){
-                $isInvited = true;}
-              }
+              <?php if (!$isFriend){     
+                $isInvited = false;
+                $sent_friend_invitation = load_sent_friend_invitation($user_accountID, $conn);
+                while ($i_row = mysqli_fetch_assoc($sent_friend_invitation)){
+                  if ($friend_accountID==$i_row['accountID']){
+                    $isInvited = true;}
+                  }
 
-              $hasBeenInvited = false;
-              $sent_friend_invitation = load_sent_friend_invitation($friend_accountID, $conn);
-              while ($j_row = mysqli_fetch_assoc($sent_friend_invitation)){
-                if ($user_accountID==$j_row['accountID']){
-                $hasBeenInvited = true;}
-              }
+                  $hasBeenInvited = false;
+                  $sent_friend_invitation = load_sent_friend_invitation($friend_accountID, $conn);
+                  while ($j_row = mysqli_fetch_assoc($sent_friend_invitation)){
+                    if ($user_accountID==$j_row['accountID']){
+                      $hasBeenInvited = true;}
+                    }
 
-              if ($privacy_setting == "public") {
-              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self_introduction: ".$row['self_introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country'];
-              ?></p>
-              <ul class="nav navbar-nav">
-               <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
-               <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID']?>">Blog</a></li>
-              </ul>
-            <?php if ($isInvited||$hasBeenInvited){ 
-              echo '<b>Invitation has been sent. </b><a href="friend_invitation.php">Go and check.</a>';
-             } else { ?>
-             <form action="friending_backend.php" method="post">
-               <input type="submit" class = "btn btn-warning" name="select" value="Send invitation" />
-               <input name="a" type="hidden" id="a" value="<?php
-          echo $row['accountID'];?>" />
-             </form>
-             <br>
+                    if ($privacy_setting == "public") {
+                      echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self_introduction: ".$row['self_introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country'];
+                      ?></p>
+                      <ul class="nav navbar-nav">
+                       <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
+                       <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID']?>">Blog</a></li>
+                     </ul>
+                     <?php if ($isInvited||$hasBeenInvited){ 
+                      echo '<b>Invitation has been sent. </b><a href="friend_invitation.php">Go and check.</a>';
+                    } else { ?>
+                    <form action="friending_backend.php" method="post">
+                     <input type="submit" class = "btn btn-warning" name="select" value="Send invitation" />
+                     <input name="a" type="hidden" id="a" value="<?php
+                     echo $row['accountID'];?>" />
+                   </form>
+                   <br>
 
-           <?php
-              }} else {
-                echo "<br>Name: ".$row['name']."<br>City: ".$row['city'];
-           ?>
+                   <?php
+                 }} else {
+                  echo "<br>Name: ".$row['name']."<br>City: ".$row['city'];
+                  ?>
 
-             <ul class="nav navbar-nav">
-              <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
-             </ul>
-          <?php if ($isInvited||$hasBeenInvited){ 
-            echo '<b>Invitation has been sent. </b><a href="friend_invitation.php">Go and check.</a>';
-           } else { ?>
-             <form action="friending_backend.php" method="post">
-               <input type="submit" class = "btn btn-warning" name="select" value="Send invitation" />
-               <input name="a" type="hidden" id="a" value="<?php
-          echo $row['accountID'];?>" />
-             </form>
-           <?php }}
-          } else { 
-            if ($privacy_setting != "private") {
-              echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self_introduction: ".$row['self_introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country']."<br><b>Has been your friend</b>";
-           ?>
-           <ul class="nav navbar-nav">
-            <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
-            <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID']?>">Blog</a></li>
-           </ul>  
-          <?php } else {
-             echo "<br>Name: ".$row['name']."<br>City: ".$row['city'];
-           ?>
-           <ul class="nav navbar-nav">
-            <li><a href="#">Photos</a></li>
-           </ul>
-           <?php } ?>
-         <form action="friending_backend.php" method="post">
-            <input type="submit" class = "btn btn-warning" name="select" value="Remove" />
-            <input name="b" type="hidden" id="b" value="<?php
-           echo $row['accountID'];?>" />
-        </form>
-            <br>
+                  <ul class="nav navbar-nav">
+                    <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
+                  </ul>
+                  <?php if ($isInvited||$hasBeenInvited){ 
+                    echo '<b>Invitation has been sent. </b><a href="friend_invitation.php">Go and check.</a>';
+                  } else { ?>
+                  <form action="friending_backend.php" method="post">
+                   <input type="submit" class = "btn btn-warning" name="select" value="Send invitation" />
+                   <input name="a" type="hidden" id="a" value="<?php
+                   echo $row['accountID'];?>" />
+                 </form>
+                 <?php }}
+               } else { 
+                if ($privacy_setting != "private") {
+                  echo "<br>Name: ".$row['name']."<br>Email address: ".$row['email_address']."<br>Age: ".$row['age']."<br>Self_introduction: ".$row['self_introduction']."<br>City: ".$row['city']."<br>Country: ".$row['country']."<br><b>Has been your friend</b>";
+                  ?>
+                  <ul class="nav navbar-nav">
+                    <li><a href="allCollections.php?accountID=<?php echo $row['accountID']?>">Photos</a></li>
+                    <li class="active"><a href="blog.php?accountID=<?php echo $row['accountID']?>">Blog</a></li>
+                  </ul>  
+                  <?php } else {
+                   echo "<br>Name: ".$row['name']."<br>City: ".$row['city'];
+                   ?>
+                   <ul class="nav navbar-nav">
+                    <li><a href="#">Photos</a></li>
+                  </ul>
+                  <?php } ?>
+                  <form action="friending_backend.php" method="post">
+                    <input type="submit" class = "btn btn-warning" name="select" value="Remove" />
+                    <input name="b" type="hidden" id="b" value="<?php
+                    echo $row['accountID'];?>" />
+                  </form>
+                  <br>
 
-            <?php
-            
-          
-          } }}} ?>
+                  <?php
+                  
+                  
+                } }}} ?>
 
-      </div>
-
-
-      <div class="col-sm-5">
-
-      </div>
-
-      <div class="col-sm-4">
-       <h4>Searching for a friend:</h4>
-       <br>
-
-       <div class="row">
- <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-4">
-  <p>Name:
-  <input type="text" name = "name" class="form-control" placeholder="Jacky" aria-describedby="basic-addon1" > </p>
-  </div> 
-
-  <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div></form>
-
-   <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-4">
-  <p>age:
-  <input type="number" name = "age" class="form-control" placeholder="25" aria-describedby="basic-addon1">  </p>
-  </div> 
-
-  <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div></div></form>
-  
-
-<div class="row">
-
- <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-4">
-  <p>City:
-  <input type="text" name = "city" class="form-control" placeholder="london" aria-describedby="basic-addon1" > </p>
-  </div>
-  <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div></form>
-
-<form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-4">
-  <p>Country:
-  <input type="text" name = "country" class="form-control" placeholder="U.K." aria-describedby="basic-addon1"> </p>
-  </div>
-  <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-</div>
-</form>
-</div>
-
-  <div class="row">
-  <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-10">
-  <p>Email address:
-  <input type="text" name = "email" class="form-control" placeholder="xxx@fake.com" aria-describedby="basic-addon1"> </p>
-  </div>
+              </div>
 
 
-  <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div>
-  </form>
-  </div>
+              <div class="col-sm-5">
 
-  <div class="row">
-  <form action="Searching_for_friends.php" method = "post">
-  <div class="col-sm-10">
-  <p>Friends of a known friend:
-  <input type="text" name = "friend_of_f" class="form-control" placeholder="Mary" aria-describedby="basic-addon1"> </p>
-  </div>
+              </div>
+
+              <div class="col-sm-4">
+               <h4>Searching for a friend:</h4>
+               <br>
+
+               <div class="row">
+                 <form action="Searching_for_friends.php" method = "post">
+                  <div class="col-sm-4">
+                    <p>Name:
+                      <input type="text" name = "name" class="form-control" placeholder="Jacky" aria-describedby="basic-addon1" > </p>
+                    </div> 
+
+                    <div class="col-sm-2">
+                      <br>
+                      <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                    </div></form>
+
+                    <form action="Searching_for_friends.php" method = "post">
+                      <div class="col-sm-4">
+                        <p>age:
+                          <input type="number" name = "age" class="form-control" placeholder="25" aria-describedby="basic-addon1">  </p>
+                        </div> 
+
+                        <div class="col-sm-2">
+                          <br>
+                          <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                        </div></div></form>
+                        
+
+                        <div class="row">
+
+                         <form action="Searching_for_friends.php" method = "post">
+                          <div class="col-sm-4">
+                            <p>City:
+                              <input type="text" name = "city" class="form-control" placeholder="london" aria-describedby="basic-addon1" > </p>
+                            </div>
+                            <div class="col-sm-2">
+                              <br>
+                              <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                            </div></form>
+
+                            <form action="Searching_for_friends.php" method = "post">
+                              <div class="col-sm-4">
+                                <p>Country:
+                                  <input type="text" name = "country" class="form-control" placeholder="U.K." aria-describedby="basic-addon1"> </p>
+                                </div>
+                                <div class="col-sm-2">
+                                  <br>
+                                  <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                </div>
+                              </form>
+                            </div>
+
+                            <div class="row">
+                              <form action="Searching_for_friends.php" method = "post">
+                                <div class="col-sm-10">
+                                  <p>Email address:
+                                    <input type="text" name = "email" class="form-control" placeholder="xxx@fake.com" aria-describedby="basic-addon1"> </p>
+                                  </div>
 
 
-  <div class="col-sm-2">
-  <br>
-  <input type="submit" class = "btn btn-info" name="select" value="Go" />
-  </div>
-  </form>
+                                  <div class="col-sm-2">
+                                    <br>
+                                    <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                  </div>
+                                </form>
+                              </div>
 
-  </div>
-  
- 
- </div>
- <hr>
+                              <div class="row">
+                                <form action="Searching_for_friends.php" method = "post">
+                                  <div class="col-sm-10">
+                                    <p>Friends of a known friend: <br>
+                                      
+                                      <?php
+                                      $r_friend_list = load_friend_list($user_accountID, $conn);
+                                      $select = '<select name="friend_of_f">';
+                                      while ($row = mysqli_fetch_assoc($r_friend_list)) {
+                                        $friend_accountID = $row['accountID'];
+                                        $privacy_setting = check_privacy_status($friend_accountID, $conn); 
+                                        if ($privacy_setting != "private") {
+                                          $select.='<option value="'.$row['accountID'].'">'.$row['name'].'</option>';
+                                        } } 
+                                        $select.='</select>';
+                                        echo $select;?>
+                                      </p></div>
 
 
-  </div>
+                                      <div class="col-sm-2">
+                                        <br>
+                                        <input type="submit" class = "btn btn-info" name="select" value="Go" />
+                                      </div>
+                                    </form>
+
+                                  </div>
+                                  
+                                  
+                                </div>
+                                <hr>
 
 
-              <br>
-              
-              <?php require_once('common_footer.html');?>
+                              </div>
+
+
+                              <br>
+                              
+                              <?php require_once('common_footer.html');?>
 
 
 
 
-            </body>
+                            </body>
 
-            </html>
+                            </html>
 
 
 
