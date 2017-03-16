@@ -55,6 +55,7 @@ $selecteddb = mysqli_select_db($conn, $dbname);
                 if (!isset($errMSG)) {
                     $xmlDoc = new DOMDocument();
                     $xmlDoc->load("export.xml");
+                    if ($xmlDoc->validate()) {
                     $xmlObject = $xmlDoc->getElementsByTagName('Account');
                     $itemCount = $xmlObject->length;
                     for ($i = 0; $i < $itemCount; $i++) {
@@ -195,17 +196,9 @@ $selecteddb = mysqli_select_db($conn, $dbname);
                         echo "blogID: " . $blogID;
                         $accountID = $xmlObject->item($i)->getElementsByTagName('accountID')->item(0)->childNodes->item(0)->nodeValue;
                         echo "<br/>accountID: " . $accountID;
-                        if (!is_null($xmlObject->item($i)->getElementsByTagName('text')->item(0)->childNodes->item(0))) {
-                            $text = $xmlObject->item($i)->getElementsByTagName('text')->item(0)->childNodes->item(0)->nodeValue;
-                        } else {
-                            $text = NULL;
-                        }
+                        $text = $xmlObject->item($i)->getElementsByTagName('text')->item(0)->childNodes->item(0)->nodeValue;
                         echo "<br/>text: " . $text;
-                        if (!is_null($xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0))) {
-                            $title = $xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0)->nodeValue;
-                        } else {
-                            $title = NULL;
-                        }
+                        $title = $xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0)->nodeValue;
                         echo "<br/>title: " . $title;
                         $timestamp = $xmlObject->item($i)->getElementsByTagName('timestamp')->item(0)->childNodes->item(0)->nodeValue;
                         echo "<br/>timestamp: " . $timestamp;
@@ -247,17 +240,10 @@ $selecteddb = mysqli_select_db($conn, $dbname);
                         echo "photoID: " . $photoID;
                         $accountID = $xmlObject->item($i)->getElementsByTagName('accountID')->item(0)->childNodes->item(0)->nodeValue;
                         echo "<br/>accountID: " . $accountID;
-                        if (!is_null($xmlObject->item($i)->getElementsByTagName('image')->item(0)->childNodes->item(0))) {
-                            $image = $xmlObject->item($i)->getElementsByTagName('image')->item(0)->childNodes->item(0)->nodeValue;
-                        } else {
-                            $image = NULL;
-                        }
+                        $image = base64_decode($xmlObject->item($i)->getElementsByTagName('image')->item(0)->childNodes->item(0)->nodeValue);
+                        //$image = $xmlObject->item($i)->getElementsByTagName('image')->item(0)->childNodes->item(0)->nodeValue;
                         echo "<br/>image: " . $image;
-                        if (!is_null($xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0))) {
-                            $title = $xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0)->nodeValue;
-                        } else {
-                            $title = NULL;
-                        }
+                        $title = $xmlObject->item($i)->getElementsByTagName('title')->item(0)->childNodes->item(0)->nodeValue;
                         echo "<br/>title: " . $title;
                         $timestamp = $xmlObject->item($i)->getElementsByTagName('timestamp')->item(0)->childNodes->item(0)->nodeValue;
                         echo "<br/>timestamp: " . $timestamp;
@@ -358,7 +344,10 @@ $selecteddb = mysqli_select_db($conn, $dbname);
 
                     echo "Import done!<br/><br/>";
                     echo mysqli_error($conn);
+                }else{
+                  echo "Invalid xml file, please upload again";
                 }
+              }
             }
             if (isset($errMSG)) {
                 ?>

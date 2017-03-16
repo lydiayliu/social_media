@@ -2,6 +2,7 @@
 include("dbconfig.php");
   $tables = array("Account","Annotation","Blog","CircleAccessRight","CircleMembership","Collection","Comment","FriendAccessRight","FriendCircle","Friendship","Photo","Invitation","Message","Recommendation");
   $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+  $xml .= "<!DOCTYPE note SYSTEM \"note.dtd\">"; //try
   $xml .="<note
     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
   $xml .= "<tables>";
@@ -17,12 +18,18 @@ include("dbconfig.php");
      while($result_array = mysqli_fetch_assoc($result)){
         $xml .= "<".$table_name.">";
         foreach($result_array as $key => $value){
-          if (!is_null($value) ) {
-             $xml .= "<$key>";
-             $xml .= "<![CDATA[$value]]>";
-             $xml .= "</$key>";
-          }else{
-             $xml .= "<$key xsi:nil=\"true\" />";
+          if ($key=='image') {
+            $xml .= "<$key>";
+            $xml .= "<![CDATA[".base64_encode($value)."]]>";
+            $xml .= "</$key>";
+          }else {
+            if (!is_null($value) ) {
+               $xml .= "<$key>";
+               $xml .= "<![CDATA[$value]]>";
+               $xml .= "</$key>";
+            }else{
+               $xml .= "<$key xsi:nil=\"true\" />";
+            }
           }
         }
         $xml.="</".$table_name.">";

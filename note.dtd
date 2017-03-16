@@ -1,0 +1,84 @@
+<!ELEMENT note (tables)>
+<!ATTLIST note xmlns:xsi CDATA "http://www.w3.org/2001/XMLSchema-instance">
+
+<!ELEMENT tables (Accounts, Annotations, Blogs, CircleAccessRights, CircleMemberships, Collections, Comments, FriendAccessRights, FriendCircles, Friendships, Photos, Invitations, Messages, Recommendations)>
+
+<!ELEMENT Accounts (Account*)>
+<!ELEMENT Account (accountID, password, isAdmin, age, name, email_address, city, country, self_introduction, privacy_setting)>
+<!ELEMENT accountID ANY>
+<!ELEMENT password ANY>
+<!ELEMENT isAdmin ANY>
+<!ELEMENT age ANY>
+<!ELEMENT name ANY>
+<!ELEMENT email_address ANY>
+<!ELEMENT city ANY>
+<!ELEMENT country ANY>
+<!ELEMENT self_introduction ANY>
+<!ELEMENT privacy_setting ANY>
+<!ATTLIST city xsi:nil CDATA #IMPLIED>
+<!ATTLIST country xsi:nil CDATA #IMPLIED>
+<!ATTLIST self_introduction xsi:nil CDATA #IMPLIED>
+<!ATTLIST privacy_setting xsi:nil CDATA #IMPLIED>
+
+
+<!ELEMENT Annotations (Annotation*)>
+<!ELEMENT Annotation (photoID, accountID, timestamp, annotation)>
+<!ELEMENT photoID ANY>
+<!ELEMENT timestamp ANY>
+<!ELEMENT annotation ANY>
+
+<!ELEMENT Blogs (Blog*)>
+<!ELEMENT Blog (blogID, accountID, text, title, timestamp)>
+<!ELEMENT blogID ANY>
+<!ELEMENT text ANY>
+<!ELEMENT title ANY>
+
+<!ELEMENT CircleAccessRights (CircleAccessRight*)>
+<!ELEMENT CircleAccessRight (collectionID, circleID)>
+<!ELEMENT collectionID ANY>
+<!ELEMENT circleID ANY>
+
+<!ELEMENT CircleMemberships (CircleMembership*)>
+<!ELEMENT CircleMembership (circleID, accountID)>
+
+<!ELEMENT Collections (Collection*)>
+<!ELEMENT Collection (collectionID, accountID, name, description)>
+<!ELEMENT description ANY>
+<!ATTLIST description xsi:nil CDATA #IMPLIED>
+
+
+<!ELEMENT Comments (Comment*)>
+<!ELEMENT Comment (photoID, accountID, timestamp, comment)>
+<!ELEMENT comment ANY>
+
+<!ELEMENT FriendAccessRights (FriendAccessRight*)>
+<!ELEMENT FriendAccessRight (collectionID, accountID)>
+
+<!ELEMENT FriendCircles (FriendCircle*)>
+<!ELEMENT FriendCircle (circleID, accountID, nameOfCircle)>
+<!ELEMENT nameOfCircle ANY>
+
+<!ELEMENT Friendships (Friendship*)>
+<!ELEMENT Friendship (friend1ID,friend2ID)>
+<!ELEMENT friend1ID ANY>
+<!ELEMENT friend2ID ANY>
+
+<!ELEMENT Photos (Photo*)>
+<!ELEMENT Photo (photoID, accountID, image, title, timestamp, collectionID)>
+<!ELEMENT image ANY>
+
+<!ELEMENT Invitations (Invitation*)>
+<!ELEMENT Invitation (accountID, inviteeID, isRejected)>
+<!ELEMENT inviteeID ANY>
+<!ELEMENT isRejected ANY>
+
+<!ELEMENT Messages (Message*)>
+<!ELEMENT Message (messageID, circleID, accountID, content, timeStamp)>
+<!ELEMENT messageID ANY>
+<!ELEMENT content ANY>
+<!ELEMENT timeStamp ANY>
+
+<!ELEMENT Recommendations (Recommendation*)>
+<!ELEMENT Recommendation (accountID, recommendeeID, reason)>
+<!ELEMENT recommendeeID ANY>
+<!ELEMENT reason ANY>
