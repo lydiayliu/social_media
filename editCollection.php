@@ -16,8 +16,8 @@ $collectionID = $_GET['collectionID'];
 
 //Edit name or description of collection
 if (isset($_POST['title']) && isset($_POST['description'])) {
-    $newName = str_replace("'", "\'\'", $_POST['title']);
-    $newDescription = str_replace("'", "\'\'", $_POST['description']);
+    $newName = mysqli_real_escape_string($conn, $_POST['title']);
+    $newDescription = mysqli_real_escape_string($conn, $_POST['description']);
     $edit_collection_Query = "UPDATE Collection
                             SET name='$newName',
                                 description='$newDescription'
@@ -194,8 +194,8 @@ $select_colletion_query = "SELECT * FROM Collection WHERE collectionID = $collec
 $result = mysqli_query($conn, $select_colletion_query)
         or die('Error making select collection query' . mysql_error());
 $Collection = mysqli_fetch_array($result);
-$title = str_replace("''", "'", $Collection[2]);
-$description = str_replace("''", "'", $Collection[3]);
+$title = nl2br($Collection[2]);
+$description = nl2br($Collection[3]);
 
 // Load photos of collection
 $photos = array();

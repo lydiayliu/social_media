@@ -34,8 +34,8 @@ function saveToDatabase($collection, $user_accountID, $conn) {
 //create new collection
 if (isset($_POST['title']) && isset($_POST['description'])) {
     $collection = array();
-    $collection['name'] =  str_replace("'", "\'\'", $_POST['title']);
-    $collection['description'] =  str_replace("'", "\'\'", $_POST['description']);
+    $collection['name'] =  mysqli_real_escape_string($conn, $_POST['title']);
+    $collection['description'] =  mysqli_real_escape_string($conn, $_POST['description']);
     saveToDatabase($collection, $user_accountID, $conn);
 }
 
@@ -93,8 +93,8 @@ function displayCollections($collections, $user_accountID, $grantedCollections, 
 
     for ($x = 0; $x < count($collections); $x++) {
         $Collection = $collections[$x];
-        $title = str_replace("''", "'", $Collection[2]);
-        $description = str_replace("''", "'", $Collection[3]);
+        $title = nl2br($Collection[2]);
+        $description = nl2br($Collection[3]);
         if (hasPermission($Collection, $user_accountID, $grantedCollections, $isAdmin)) {
             echo "               
                     <div class=\"post-preview\">

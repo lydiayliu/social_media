@@ -25,20 +25,19 @@ function isDataValid() {
     return True;
 }
 
-function getBlogPost() {
+function getBlogPost($conn) {
     $blogPost = array();
-    $blogPost['title'] = str_replace("'", "\'\'", $_POST['title']);
-    $blogPost['content'] = str_replace("\n", "<br />", $_POST['content']);
-    $blogPost['content'] = str_replace("'", "\'\'", $blogPost['content']);
+    $blogPost['title'] = mysqli_real_escape_string($conn, $_POST["title"]);
+    $blogPost['content'] = mysqli_real_escape_string($conn, $_POST["content"]);
     return $blogPost;
 }
 
 function printTitle($blogPost) {
-    echo str_replace("\'\'", "'",$blogPost['title']);
+    echo nl2br($blogPost['title']);
 }
 
 function printContent($blogPost) {
-    echo str_replace("\'\'", "'",$blogPost['content']);
+    echo nl2br($blogPost['content']);
 }
 
 function saveToDatabase($blogPost, $user_accountID, $conn) {
@@ -49,9 +48,10 @@ function saveToDatabase($blogPost, $user_accountID, $conn) {
 }
 
 if (isDataValid()) {
-    $newBlogPost = getBlogPost();
+    $newBlogPost = getBlogPost($conn);
     saveToDatabase($newBlogPost, $user_accountID, $conn);
-    $blogPost = $newBlogPost;
+    $blogPost['title'] = $_POST["title"];
+    $blogPost['content'] = $_POST["content"];
 }
 ?>
 

@@ -21,10 +21,9 @@ $result = mysqli_query($conn, $select_blog_query)
 
 $BP = mysqli_fetch_array($result);
 
-$content = str_replace("<br />", "\n", $BP[2]);
-$content = str_replace("''", "'", $content);
+$content = $BP[2];
+$title = $BP[1];
 
-$title = str_replace("''", "'", $BP[1]);
 ?>     
 <html lang="en">
 

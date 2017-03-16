@@ -18,8 +18,8 @@ $selection_collection_query = "SELECT collectionID, Collection.accountID, Collec
 $result = mysqli_query($conn, $selection_collection_query)
         or die('Error making select collection query' . mysql_error());
 $Collection = mysqli_fetch_array($result);
-$title = str_replace("''", "'", $Collection[2]);
-$description = str_replace("''", "'", $Collection[3]);
+$title = nl2br($Collection[2]);
+$description = nl2br($Collection[3]);
 
 $photos = array();
 $select_photos_query = "SELECT accountID, image, title, timestamp, photoID FROM Photo WHERE collectionID = $collectionID ORDER BY timestamp DESC";

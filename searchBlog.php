@@ -39,9 +39,8 @@ function displayBP($blogPosts, $name) {
     for ($x = 0; $x < count($blogPosts); $x++) {
         $BP = $blogPosts[$x];
 
-        $title = str_replace("''", "'", $BP[1]);
-        $preview = str_replace("<br />", "\n", $BP[2]);
-        $preview = str_replace("''", "'", $preview);
+        $title = nl2br($BP[1]);
+        $preview = $BP[2];
         $preview = substr($preview, 0, 50);
 
         echo "               

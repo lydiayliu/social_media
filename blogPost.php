@@ -14,11 +14,10 @@ $user_accountID = mysqli_fetch_assoc(mysqli_query($conn, $load_accountID))['acco
 
 $bp_ID = $_GET['blogID'];
 
-function getBlogPost() {
+function getBlogPost($conn) {
     $blogPost = array();
-    $blogPost['title'] = str_replace("'", "\'\'", $_POST['title']);
-    $blogPost['content'] = str_replace("\n", "<br />", $_POST['content']);
-    $blogPost['content'] = str_replace("'", "\'\'", $blogPost['content']);
+    $blogPost['title'] = mysqli_real_escape_string($conn, $_POST["title"]);
+    $blogPost['content'] = mysqli_real_escape_string($conn, $_POST["content"]);
     return $blogPost;
 }
 
@@ -32,7 +31,7 @@ function saveToDatabase($blogPost, $bp_ID, $conn) {
 
 // Edit blog post
 if (isset($_POST['title']) && isset($_POST['content'])) {
-    $editedBlogPost = getBlogPost();
+    $editedBlogPost = getBlogPost($conn);
     saveToDatabase($editedBlogPost, $bp_ID, $conn);
 }
 
@@ -43,8 +42,8 @@ $result = mysqli_query($conn, $select_blog_query)
 
 $BP = mysqli_fetch_array($result);
 
-$title = str_replace("''", "'", $BP[1]);
-$content = str_replace("''", "'", $BP[2]);
+$title = $BP[1];
+$content = nl2br($BP[2]);
 
 function displayEditButton($bp_ID) {
     echo "
@@ -110,7 +109,7 @@ function displayEditButton($bp_ID) {
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                        <?php echo $content ?>
+                            <?php echo $content ?>
                     </div>
                 </div>
             </div>

@@ -44,7 +44,7 @@ if (isset($_POST['annotation'])) {
 
 //Add Comments
 if (isset($_POST['comment'])) {
-    $comment = $_POST['comment'];
+    $comment = mysqli_real_escape_string($conn, $_POST['comment']);
 
     $insert_comment_Query = "INSERT INTO Comment (photoID, accountID, comment) 
                             VALUES ( '$bp_ID', '$user_accountID','$comment')";
