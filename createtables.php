@@ -1,12 +1,17 @@
 <?php
  // DB connection info, please change for your own machine setup
+ //the following connection is for Azure
   $servername = "eu-cdbr-azure-west-d.cloudapp.net";
   $username = "b3ecadc66c8aa5";
   $password = "fda61879";
   $dbname = "socialmediadb";
-  
+//$servername = "localhost";
+//$username = "root";
+//$password = "0987";
+//$dbname = "social_media";
+//  
  try{
-     //$conn = new PDO( "mysql:host=$host;dbname=$db", $user, $pwd);
+     //$conn = new PDO( "mysql:host=$servername;dbname=$dbname", $username, $password);
      //$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
      $conn = new mysqli($servername, $username, $password, $dbname);
      $account_sql = "CREATE TABLE `Account` ( `accountID` INT AUTO_INCREMENT NOT NULL ,`password` VARCHAR(255) NOT NULL , `isAdmin` BOOLEAN NOT NULL DEFAULT FALSE, `age` INT(2) NOT NULL , `name` VARCHAR(30) NOT NULL , `email_address` VARCHAR(30) NOT NULL , `city` VARCHAR(15) NULL , `country` VARCHAR(15) NULL , `self_introduction` TEXT NULL ,`privacy_setting` SET('friends_only','public','private','') NULL DEFAULT 'friends_only' , PRIMARY KEY (`accountID`), UNIQUE(email_address)) ENGINE=InnoDB";
@@ -21,7 +26,7 @@
      $circle_as_sql = "CREATE TABLE `CircleAccessRight` ( `collectionID` INT NOT NULL , `circleID` INT NOT NULL , PRIMARY KEY (`collectionID`,`circleID`), FOREIGN KEY (`collectionID`) REFERENCES Collection(`collectionID`) ON DELETE CASCADE, FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`) ON DELETE CASCADE) ENGINE=InnoDB";
      $friend_as_sql = "CREATE TABLE `FriendAccessRight` ( `collectionID` INT NOT NULL , `accountID` INT NOT NULL , PRIMARY KEY (`collectionID`,`accountID`), FOREIGN KEY (`collectionID`) REFERENCES Collection(`collectionID`) ON DELETE CASCADE, FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
      $friend_sql = "CREATE TABLE `Friendship` ( `friend1ID` INT NOT NULL , `friend2ID` INT NOT NULL , PRIMARY KEY (`friend1ID`,`friend2ID`), FOREIGN KEY (`friend1ID`) REFERENCES Account(`accountID`), FOREIGN KEY (`friend2ID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
-     $circlemem_sql = "CREATE TABLE `CircleMembership` ( `circleID` INT NOT NULL , `accountID` INT NOT NULL , PRIMARY KEY (`circleID`,`accountID`), FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
+     $circlemem_sql = "CREATE TABLE `CircleMembership` ( `circleID` INT NOT NULL , `accountID` INT NOT NULL , PRIMARY KEY (`circleID`,`accountID`), FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`) ON DELETE CASCADE, FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`)) ENGINE=InnoDB";
      $message_sql = "CREATE TABLE `Message` ( `messageID` INT AUTO_INCREMENT NOT NULL, `circleID` INT NOT NULL, `accountID` INT NOT NULL, `content` TEXT NOT NULL, `timeStamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`messageID`), FOREIGN KEY (`accountID`) REFERENCES Account(`accountID`), FOREIGN KEY (`circleID`) REFERENCES FriendCircle(`circleID`) ON DELETE CASCADE) ENGINE=InnoDB";
      $conn->query($account_sql);
      $conn->query($recommendation_sql);
